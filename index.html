@@ -1,16 +1,17 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>chudovishe // client</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.js"></script>
     <script src="https://unpkg.com/scrollreveal"></script>
     <style>
         :root {
             --bg: #030305;
             --accent: #8a2be2;
-            --border: rgba(138, 43, 226, 0.2);
+            --border: rgba(138, 43, 226, 0.25);
             --card-bg: rgba(255, 255, 255, 0.01);
             --text-main: #ffffff;
             --text-dim: #444;
@@ -20,39 +21,36 @@
         body { background-color: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; text-transform: lowercase; }
         .container { width: 92%; max-width: 460px; padding: 40px 0; position: relative; z-index: 1; }
         
-        /* Lang Switch */
         .lang-switch { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 25px; }
         .lang-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 5px 12px; border-radius: 6px; font-size: 10px; transition: 0.3s; }
-        .lang-btn.active { border-color: var(--accent); color: #fff; box-shadow: 0 0 10px rgba(138, 43, 226, 0.3); }
+        .lang-btn.active { border-color: var(--accent); color: #fff; box-shadow: 0 0 10px rgba(138, 43, 226, 0.4); }
 
         .header-card { text-align: center; margin-bottom: 50px; }
-        .logo { width: 80px; height: 80px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 0 30px rgba(138, 43, 226, 0.1); margin-bottom: 15px; }
-        h1 { font-size: 24px; letter-spacing: 6px; font-weight: 200; margin: 0; }
+        .logo { width: 80px; height: 80px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 0 30px rgba(138, 43, 226, 0.2); margin-bottom: 15px; }
+        h1 { font-size: 24px; letter-spacing: 6px; font-weight: 200; margin: 0; color: #fff; }
         .subtitle { color: var(--accent); font-size: 10px; letter-spacing: 2px; margin-top: 5px; }
 
         .btn-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 60px; }
         .btn { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 14px; color: #fff; text-decoration: none; text-align: center; backdrop-filter: blur(10px); transition: 0.3s; font-size: 14px; }
-        .btn:hover { border-color: var(--accent); box-shadow: 0 0 20px rgba(138, 43, 226, 0.2); transform: translateY(-2px); }
+        .btn:hover { border-color: var(--accent); box-shadow: 0 0 20px rgba(138, 43, 226, 0.3); transform: translateY(-2px); }
 
-        /* ОТДЕЛЬНЫЙ БЛОК: ФОРМА */
+        /* БЛОК ФОРМЫ */
         .section-box { background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 40px; backdrop-filter: blur(15px); }
         .label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 4px; display: block; margin-bottom: 20px; text-align: center; }
         
-        input, textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 10px; color: #fff; padding: 12px; margin-bottom: 15px; outline: none; font-family: inherit; font-size: 13px; box-sizing: border-box; transition: 0.3s; }
-        input:focus, textarea:focus { border-color: var(--accent); }
-        .submit-btn { width: 100%; background: var(--accent); color: #fff; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; text-transform: lowercase; transition: 0.3s; }
-        .submit-btn:hover { filter: brightness(1.2); box-shadow: 0 0 20px rgba(138, 43, 226, 0.4); }
-        .submit-btn:disabled { background: #111; color: #333; cursor: not-allowed; }
+        input, textarea { width: 100%; background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 10px; color: #fff; padding: 12px; margin-bottom: 15px; outline: none; font-family: inherit; font-size: 13px; box-sizing: border-box; }
+        .submit-btn { width: 100%; background: var(--accent); color: #fff; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; text-transform: lowercase; transition: 0.3s; box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3); }
+        .submit-btn:active { transform: scale(0.95); }
 
-        /* ОТДЕЛЬНЫЙ БЛОК: ПУБЛИЧНЫЕ ОТЗЫВЫ */
-        .public-reviews-wrap { width: 100%; }
-        #reviews-list { display: flex; flex-direction: column; gap: 15px; }
-        .review-item { background: rgba(138, 43, 226, 0.03); border-left: 2px solid var(--accent); padding: 20px; border-radius: 0 15px 15px 0; backdrop-filter: blur(5px); animation: revealReview 0.5s ease-out forwards; }
-        @keyframes revealReview { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        /* БЛОК ПУБЛИЧНЫХ ОТЗЫВОВ */
+        .public-reviews-wrap { width: 100%; margin-top: 20px; }
+        #reviews-list { display: flex; flex-direction: column; gap: 15px; min-height: 50px; }
+        .review-item { background: rgba(138, 43, 226, 0.05); border-left: 3px solid var(--accent); padding: 20px; border-radius: 0 15px 15px 0; backdrop-filter: blur(5px); animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .rev-nick { color: var(--accent); font-weight: bold; font-size: 11px; margin-bottom: 8px; display: block; }
-        .rev-text { color: #ccc; font-size: 13px; line-height: 1.5; text-transform: none; }
+        .rev-text { color: #ddd; font-size: 13px; line-height: 1.5; text-transform: none; }
 
-        .footer { text-align: center; padding: 60px 0; font-size: 8px; color: #111; letter-spacing: 5px; }
+        .footer { text-align: center; padding: 60px 0; font-size: 8px; color: #222; letter-spacing: 5px; }
     </style>
 </head>
 <body>
@@ -63,44 +61,50 @@
             <button class="lang-btn" onclick="setLang('en')">en</button>
         </div>
 
-        <div class="header-card reveal">
+        <div class="header-card">
             <img src="https://t.me/i/userpic/160/chudovisheclient.jpg" alt="logo" class="logo">
             <h1>chudovishe</h1>
             <div class="subtitle" id="sub-text">java 1.21.4 // pc & mobile</div>
         </div>
 
-        <div class="btn-container reveal">
+        <div class="btn-container">
             <a href="https://t.me/chudovisheclient/347" class="btn" id="btn-dl">скачать jar</a>
-            <a href="https://t.me/chudovisheclient/376" class="btn" id="btn-beta" style="border-color: #222;">купить beta</a>
+            <a href="https://t.me/chudovisheclient/376" class="btn" id="btn-beta" style="border-color: #333;">купить beta</a>
         </div>
 
-        <div class="section-box reveal">
+        <div class="section-box">
             <span class="label" id="lbl-form">оставить отзыв</span>
             <input type="text" id="name" placeholder="ник в tg">
             <textarea id="content" rows="3" placeholder="сообщение..."></textarea>
             <button id="sendBtn" class="submit-btn" onclick="addReview()">отправить</button>
         </div>
 
-        <div class="public-reviews-wrap reveal">
-            <span class="label" id="lbl-public">публичные отзывы</span>
+        <div class="public-reviews-wrap">
+            <span class="label" id="lbl-public" style="margin-bottom: 25px;">публичные отзывы</span>
             <div id="reviews-list">
-                </div>
+                <div style="text-align: center; color: var(--text-dim); font-size: 12px;">загрузка...</div>
+            </div>
         </div>
 
-        <div class="footer">recidivismnational // stat_sys</div>
+        <div class="footer">recidivismnational // static</div>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://bgcvgxebtyiinxqaqqwcm.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnY3ZneGVidHlpbnhxYXFxd2NtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzkwMTksImV4cCI6MjA4OTM1NTAxOX0.DYe_JAg7v054T4sVwb8jEyxFi4XND_D_tu323FSuJuo';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Ждем загрузки библиотеки Supabase
+        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const langData = {
-            ru: { sub: "java 1.21.4 // pc & mobile", dl: "скачать jar", beta: "купить beta", f: "оставить отзыв", p: "публичные отзывы", n: "ник в tg", m: "сообщение...", s: "отправить" },
-            en: { sub: "java 1.21.4 // pc & mobile", dl: "download jar", beta: "buy beta", f: "leave a review", p: "public reviews", n: "tg nickname", m: "message...", s: "send" }
+            ru: { sub: "java 1.21.4 // pc & mobile", dl: "скачать jar", beta: "купить beta", f: "оставить отзыв", p: "публичные отзывы", n: "ник в tg", m: "сообщение...", s: "отправить", empty: "здесь пока пусто" },
+            en: { sub: "java 1.21.4 // pc & mobile", dl: "download jar", beta: "buy beta", f: "leave a review", p: "public reviews", n: "tg nickname", m: "message...", s: "send", empty: "no reviews yet" }
         };
 
+        let currentLang = 'ru';
+
         function setLang(lang) {
+            currentLang = lang;
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             document.getElementById('sub-text').innerText = langData[lang].sub;
@@ -111,58 +115,80 @@
             document.getElementById('name').placeholder = langData[lang].n;
             document.getElementById('content').placeholder = langData[lang].m;
             document.getElementById('sendBtn').innerText = langData[lang].s;
+            loadReviews();
         }
 
         async function loadReviews() {
-            const { data } = await _supabase.from('reviews').select('*').order('created_at', { ascending: false });
             const list = document.getElementById('reviews-list');
-            if (!data || data.length === 0) return;
-            list.innerHTML = data.map(r => `
-                <div class="review-item">
-                    <span class="rev-nick">@${r.name}</span>
-                    <p class="rev-text">${r.content}</p>
-                </div>
-            `).join('');
+            try {
+                const { data, error } = await _supabase.from('reviews').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                if (!data || data.length === 0) {
+                    list.innerHTML = `<div style="text-align: center; color: var(--text-dim); font-size: 12px;">${langData[currentLang].empty}</div>`;
+                    return;
+                }
+                list.innerHTML = data.map(r => `
+                    <div class="review-item">
+                        <span class="rev-nick">@${r.name}</span>
+                        <p class="rev-text">${r.content}</p>
+                    </div>
+                `).join('');
+            } catch (e) {
+                list.innerHTML = `<div style="text-align: center; color: #ff5555; font-size: 10px;">ошибка подключения к базе</div>`;
+            }
         }
 
         async function addReview() {
             const n = document.getElementById('name').value;
             const c = document.getElementById('content').value;
             const b = document.getElementById('sendBtn');
-            if(n.length < 2 || c.length < 2) return;
+            
+            if(n.length < 2 || c.length < 2) { alert("заполни поля"); return; }
             
             const last = localStorage.getItem('sent');
-            if(last && Date.now() - last < 60000) return alert("wait 1 min");
+            if(last && Date.now() - last < 30000) { alert("подожди 30 сек"); return; }
 
+            b.innerText = "...";
             b.disabled = true;
-            const { error } = await _supabase.from('reviews').insert([{ name: n, content: c }]);
-            if(!error) {
+
+            try {
+                const { error } = await _supabase.from('reviews').insert([{ name: n, content: c }]);
+                if(error) throw error;
                 localStorage.setItem('sent', Date.now());
                 document.getElementById('content').value = '';
-                loadReviews();
+                await loadReviews();
+            } catch (e) {
+                alert("ошибка: " + e.message);
+            } finally {
+                b.innerText = langData[currentLang].s;
+                b.disabled = false;
             }
-            b.disabled = false;
         }
 
-        loadReviews();
-
-        // АХУЕННЫЕ ПАРТИКЛЫ
-        const canvas = document.getElementById('particleCanvas'); const ctx = canvas.getContext('2d'); let pArr = [];
-        function init() { 
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight; pArr = [];
-            for(let i=0; i<50; i++) pArr.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.2, vy:(Math.random()-0.5)*0.2});
+        // ПАРТИКЛЫ
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let pArr = [];
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            pArr = [];
+            for(let i=0; i<60; i++) pArr.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.2, vy:(Math.random()-0.5)*0.2});
         }
         function draw() {
-            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(138, 43, 226, 0.4)';
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = 'rgba(138, 43, 226, 0.4)';
             pArr.forEach(p => {
-                p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill();
-            }); requestAnimationFrame(draw);
+                p.x+=p.vx; p.y+=p.vy;
+                if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
+                if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(draw);
         }
-        window.onresize = init; init(); draw();
-        ScrollReveal().reveal('.reveal', { delay: 100, distance: '10px', origin: 'bottom', interval: 50 });
+        window.addEventListener('resize', init);
+        init(); draw();
+        loadReviews();
     </script>
 </body>
 </html>
-
-
