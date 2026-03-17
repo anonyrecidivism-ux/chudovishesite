@@ -8,41 +8,64 @@
     <script src="https://unpkg.com/scrollreveal"></script>
     <style>
         :root {
-            --bg: #080510;
+            --bg: #050508;
             --accent: #8a2be2;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
-            --text-main: #ffffff;
-            --text-dim: #707070;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --border: rgba(138, 43, 226, 0.2);
+            --text-main: #eee;
+            --text-dim: #555;
         }
 
         #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        body { background-color: var(--bg); color: var(--text-main); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; text-transform: lowercase; }
-        .container { width: 90%; max-width: 500px; padding: 40px 0; position: relative; z-index: 1; }
+        body { background-color: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; text-transform: lowercase; }
+        .container { width: 92%; max-width: 450px; padding: 40px 0; position: relative; z-index: 1; }
         
-        /* Lang Switcher */
-        .lang-switch { display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 20px; }
-        .lang-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 5px 10px; border-radius: 5px; font-size: 12px; transition: 0.3s; }
-        .lang-btn.active { border-color: var(--accent); color: #fff; }
+        .lang-switch { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 30px; }
+        .lang-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 4px 12px; border-radius: 6px; font-size: 11px; transition: 0.3s; }
+        .lang-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
         .header-card { text-align: center; margin-bottom: 40px; }
-        .logo { width: 90px; height: 90px; border-radius: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        h1 { font-size: 22px; letter-spacing: 2px; margin: 0; font-weight: normal; }
-        .subtitle { font-size: 12px; color: var(--accent); margin-top: 5px; }
+        .logo { width: 85px; height: 85px; border-radius: 22px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 0 20px rgba(138, 43, 226, 0.1); }
+        h1 { font-size: 24px; letter-spacing: 4px; margin: 0; font-weight: 300; color: #fff; }
+        .subtitle { font-size: 11px; color: var(--accent); margin-top: 5px; }
 
-        .btn-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 40px; }
-        .btn { background: var(--glass); border: 1px solid var(--border); padding: 18px; border-radius: 12px; color: #fff; text-decoration: none; text-align: center; transition: 0.3s; backdrop-filter: blur(10px); }
-        .btn:hover { border-color: var(--accent); background: rgba(138, 43, 226, 0.05); }
+        .btn-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 50px; }
+        .btn { background: var(--card-bg); border: 1px solid var(--border); padding: 16px; border-radius: 14px; color: #fff; text-decoration: none; text-align: center; transition: 0.3s; backdrop-filter: blur(12px); }
+        .btn:hover { border-color: var(--accent); transform: translateY(-2px); }
 
-        .review-form { background: rgba(255,255,255,0.01); border: 1px dashed var(--border); padding: 20px; border-radius: 12px; margin-bottom: 25px; }
-        input, textarea { width: 100%; background: none; border: none; border-bottom: 1px solid var(--border); color: #fff; margin-bottom: 15px; padding: 8px 0; outline: none; font-family: inherit; font-size: 14px; }
-        button { width: 100%; background: var(--accent); color: #fff; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; text-transform: lowercase; }
+        /* REVIEWS SYSTEM */
+        .section-label { font-size: 9px; color: var(--text-dim); margin-bottom: 20px; display: block; text-align: center; letter-spacing: 4px; }
         
-        .review-card { background: var(--glass); border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 10px; }
-        .review-author { color: var(--accent); font-size: 13px; margin-bottom: 5px; display: block; }
-        .review-text { color: #ccc; font-size: 13px; margin: 0; line-height: 1.4; }
+        .review-form { 
+            background: rgba(255,255,255,0.01); border: 1px solid var(--border); 
+            padding: 20px; border-radius: 18px; margin-bottom: 30px; backdrop-filter: blur(10px);
+        }
+        
+        input, textarea { 
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); 
+            color: #fff; padding: 12px; border-radius: 10px; outline: none; 
+            font-family: inherit; font-size: 13px; margin-bottom: 15px; box-sizing: border-box;
+        }
+        input:focus, textarea:focus { border-color: var(--accent); }
 
-        .footer { text-align: center; padding: 40px 0; font-size: 10px; color: #333; letter-spacing: 2px; }
+        .submit-btn { 
+            width: 100%; background: var(--accent); color: #fff; border: none; padding: 14px; 
+            border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.3s;
+        }
+        .submit-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
+
+        /* LIST OF REVIEWS */
+        #reviews-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .review-card { 
+            background: var(--card-bg); border: 1px solid var(--border); 
+            padding: 16px; border-radius: 14px; 
+            animation: slideUp 0.5s ease-out forwards;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .review-author { color: var(--accent); font-size: 11px; margin-bottom: 6px; display: block; font-weight: bold; }
+        .review-text { color: #ccc; font-size: 13px; line-height: 1.5; text-transform: none; }
+
+        .footer { text-align: center; padding: 50px 0; font-size: 9px; color: #1a1a1a; letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -61,19 +84,24 @@
 
         <div class="btn-container reveal">
             <a href="https://t.me/chudovisheclient/347" class="btn" id="btn-dl">скачать jar</a>
-            <a href="https://t.me/chudovisheclient/376" class="btn" id="btn-beta" style="border-color: #555;">купить beta</a>
+            <a href="https://t.me/chudovisheclient/376" class="btn" id="btn-beta" style="opacity: 0.6;">купить beta</a>
         </div>
 
         <div class="section reveal">
-            <span style="font-size: 10px; color: var(--text-dim); margin-bottom: 15px; display: block; text-align: center;" id="rev-title">отзывы</span>
+            <span class="section-label" id="rev-title">live_feed</span>
+            
             <div class="review-form">
                 <input type="text" id="name" placeholder="твой ник">
-                <textarea id="content" rows="2" placeholder="текст..."></textarea>
-                <button id="sendBtn" onclick="addReview()">опубликовать</button>
+                <textarea id="content" rows="3" placeholder="напиши что думаешь..."></textarea>
+                <button id="sendBtn" class="submit-btn" onclick="addReview()">опубликовать</button>
+                <div id="cooldownText" style="font-size: 9px; color: var(--accent); margin-top: 10px; text-align: center; display: none;">ждем минуту...</div>
             </div>
-            <div id="reviews-list"></div>
+
+            <div id="reviews-list">
+                </div>
         </div>
-        <div class="footer">recidivismnational // 2026</div>
+        
+        <div class="footer">recidivismnational // static_system</div>
     </div>
 
     <script>
@@ -82,8 +110,8 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const langData = {
-            ru: { sub: "java 1.21.4 // pc & mobile", dl: "скачать jar", beta: "купить beta", rev: "отзывы", nick: "твой ник", text: "текст...", send: "опубликовать", load: "загрузка..." },
-            en: { sub: "java 1.21.4 // pc & mobile", dl: "download jar", beta: "buy beta", rev: "reviews", nick: "your nick", text: "message...", send: "publish", load: "loading..." }
+            ru: { sub: "java 1.21.4 // pc & mobile", dl: "скачать jar", beta: "купить beta", rev: "live_feed", nick: "твой ник", text: "напиши что думаешь...", send: "опубликовать" },
+            en: { sub: "java 1.21.4 // pc & mobile", dl: "download jar", beta: "buy beta", rev: "live_feed", nick: "your nick", text: "write a review...", send: "publish" }
         };
 
         function setLang(lang) {
@@ -101,33 +129,50 @@
         async function loadReviews() {
             const { data } = await _supabase.from('reviews').select('*').order('created_at', { ascending: false });
             const list = document.getElementById('reviews-list');
-            if (!data || data.length === 0) { list.innerHTML = ''; return; }
-            list.innerHTML = data.map(r => `<div class="review-card"><span class="review-author">@${r.name}</span><p class="review-text">${r.content}</p></div>`).join('');
+            if (!data || data.length === 0) return;
+            list.innerHTML = data.map(r => `
+                <div class="review-card">
+                    <span class="review-author">@${r.name}</span>
+                    <p class="review-text">${r.content}</p>
+                </div>
+            `).join('');
         }
 
         async function addReview() {
-            const n = document.getElementById('name').value; const c = document.getElementById('content').value;
-            if(!n || !c) return;
-            await _supabase.from('reviews').insert([{ name: n, content: c }]);
-            document.getElementById('content').value = ''; loadReviews();
+            const n = document.getElementById('name').value;
+            const c = document.getElementById('content').value;
+            const btn = document.getElementById('sendBtn');
+            const cd = document.getElementById('cooldownText');
+
+            if(n.length < 2 || c.length < 3) return alert("слишком коротко");
+
+            // ANTI-SPAM: Cooldown 60s
+            const lastSent = localStorage.getItem('lastReview');
+            if(lastSent && Date.now() - lastSent < 60000) {
+                cd.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            const { error } = await _supabase.from('reviews').insert([{ name: n, content: c }]);
+            
+            if(!error) {
+                localStorage.setItem('lastReview', Date.now());
+                document.getElementById('content').value = '';
+                loadReviews();
+                cd.style.display = 'none';
+            }
+            btn.disabled = false;
         }
 
         loadReviews();
-        // Particles
+        // Particles (White dots)
         const canvas = document.getElementById('particleCanvas'); const ctx = canvas.getContext('2d'); let pArr = [];
-        function init() { 
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight; pArr = [];
-            for(let i=0; i<40; i++) pArr.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.2, vy:(Math.random()-0.5)*0.2});
-        }
-        function draw() {
-            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(255,255,255,0.2)';
-            pArr.forEach(p => { 
-                p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
-                ctx.beginPath(); ctx.arc(p.x,p.y,1,0,Math.PI*2); ctx.fill();
-            }); requestAnimationFrame(draw);
-        }
+        function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; pArr = []; for(let i=0; i<40; i++) pArr.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.1, vy:(Math.random()-0.5)*0.1}); }
+        function draw() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(255,255,255,0.1)'; pArr.forEach(p => { p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,0.8,0,Math.PI*2); ctx.fill(); }); requestAnimationFrame(draw); }
         window.onresize = init; init(); draw();
         ScrollReveal().reveal('.reveal', { delay: 100, distance: '10px', origin: 'bottom', interval: 50 });
     </script>
 </body>
 </html>
+html>
