@@ -10,66 +10,81 @@
         :root {
             --bg: #050508;
             --accent: #8a2be2;
-            --card-bg: rgba(255, 255, 255, 0.02);
-            --border: rgba(138, 43, 226, 0.2);
+            --accent-glow: rgba(138, 43, 226, 0.4);
+            --card-bg: rgba(255, 255, 255, 0.01);
+            --border: rgba(138, 43, 226, 0.15);
             --text-main: #eee;
             --text-dim: #555;
         }
 
         #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         body { background-color: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; text-transform: lowercase; }
-        .container { width: 92%; max-width: 450px; padding: 40px 0; position: relative; z-index: 1; }
+        .container { width: 92%; max-width: 480px; padding: 40px 0; position: relative; z-index: 1; }
         
+        /* ЛЕНГ СВИТЧЕР - НА СТИЛЕ */
         .lang-switch { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 30px; }
         .lang-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 4px 12px; border-radius: 6px; font-size: 11px; transition: 0.3s; }
-        .lang-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .lang-btn.active { border-color: var(--accent); color: #fff; box-shadow: 0 0 10px var(--accent-glow); }
 
+        /* ХЕДЕР С ГЛОУ */
         .header-card { text-align: center; margin-bottom: 40px; }
-        .logo { width: 85px; height: 85px; border-radius: 22px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 0 20px rgba(138, 43, 226, 0.1); }
-        h1 { font-size: 24px; letter-spacing: 4px; margin: 0; font-weight: 300; color: #fff; }
-        .subtitle { font-size: 11px; color: var(--accent); margin-top: 5px; }
+        .logo { width: 90px; height: 90px; border-radius: 25px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 0 25px rgba(138, 43, 226, 0.15); }
+        h1 { font-size: 26px; letter-spacing: 5px; margin: 0; font-weight: 300; color: #fff; }
+        .subtitle { font-size: 11px; color: var(--accent); margin-top: 5px; letter-spacing: 2px; }
 
+        /* КНОПКИ С ГЛОУ */
         .btn-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 50px; }
-        .btn { background: var(--card-bg); border: 1px solid var(--border); padding: 16px; border-radius: 14px; color: #fff; text-decoration: none; text-align: center; transition: 0.3s; backdrop-filter: blur(12px); }
-        .btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .btn { 
+            background: var(--card-bg); border: 1px solid var(--border); 
+            padding: 20px; border-radius: 16px; color: #fff; 
+            text-decoration: none; text-align: center; transition: 0.3s; 
+            backdrop-filter: blur(15px); font-size: 15px; letter-spacing: 1px;
+        }
+        .btn:hover { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); transform: translateY(-3px); }
 
-        /* REVIEWS SYSTEM */
-        .section-label { font-size: 9px; color: var(--text-dim); margin-bottom: 20px; display: block; text-align: center; letter-spacing: 4px; }
+        /* СИСТЕМА ОТЗЫВОВ - АХУЕННО */
+        .section-label { font-size: 9px; color: var(--text-dim); margin-bottom: 25px; display: block; text-align: center; letter-spacing: 5px; text-transform: uppercase; }
         
         .review-form { 
             background: rgba(255,255,255,0.01); border: 1px solid var(--border); 
-            padding: 20px; border-radius: 18px; margin-bottom: 30px; backdrop-filter: blur(10px);
+            padding: 25px; border-radius: 20px; margin-bottom: 35px; backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         
         input, textarea { 
-            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); 
-            color: #fff; padding: 12px; border-radius: 10px; outline: none; 
-            font-family: inherit; font-size: 13px; margin-bottom: 15px; box-sizing: border-box;
+            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.03); 
+            color: #fff; padding: 14px; border-radius: 12px; outline: none; 
+            font-family: inherit; font-size: 14px; margin-bottom: 15px; box-sizing: border-box;
+            transition: 0.3s;
         }
-        input:focus, textarea:focus { border-color: var(--accent); }
+        input:focus, textarea:focus { border-color: var(--accent); background: rgba(138, 43, 226, 0.05); }
 
         .submit-btn { 
-            width: 100%; background: var(--accent); color: #fff; border: none; padding: 14px; 
-            border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.3s;
+            width: 100%; background: var(--accent); color: #fff; border: none; padding: 16px; 
+            border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s;
+            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4);
         }
-        .submit-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
+        .submit-btn:hover { transform: scale(1.01); filter: brightness(1.1); }
+        .submit-btn:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow: none; }
 
-        /* LIST OF REVIEWS */
-        #reviews-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        /* ЛЕНТА ОТЗЫВОВ - КАЙФ */
+        #reviews-list { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
         .review-card { 
-            background: var(--card-bg); border: 1px solid var(--border); 
-            padding: 16px; border-radius: 14px; 
-            animation: slideUp 0.5s ease-out forwards;
+            background: rgba(255,255,255,0.01); border-left: 3px solid var(--accent); 
+            padding: 18px; border-radius: 0 16px 16px 0; 
+            backdrop-filter: blur(5px);
+            animation: slideInLeft 0.5s ease-out forwards;
         }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .review-author { color: var(--accent); font-size: 11px; margin-bottom: 6px; display: block; font-weight: bold; }
-        .review-text { color: #ccc; font-size: 13px; line-height: 1.5; text-transform: none; }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
+        .review-author { color: var(--accent); font-size: 11px; margin-bottom: 7px; display: block; font-weight: bold; letter-spacing: 1px; }
+        .review-text { color: #ccc; font-size: 14px; line-height: 1.5; text-transform: none; }
 
         .footer { text-align: center; padding: 50px 0; font-size: 9px; color: #1a1a1a; letter-spacing: 2px; }
     </style>
 </head>
 <body>
     <canvas id="particleCanvas"></canvas>
+
     <div class="container">
         <div class="lang-switch">
             <button class="lang-btn active" onclick="setLang('ru')">ru</button>
@@ -84,7 +99,7 @@
 
         <div class="btn-container reveal">
             <a href="https://t.me/chudovisheclient/347" class="btn" id="btn-dl">скачать jar</a>
-            <a href="https://t.me/chudovisheclient/376" class="btn" id="btn-beta" style="opacity: 0.6;">купить beta</a>
+            <a href="https://t.me/chudovisheclient/376" class="btn" id="btn-beta" style="opacity: 0.6; border-color: #333;">купить beta</a>
         </div>
 
         <div class="section reveal">
@@ -94,7 +109,7 @@
                 <input type="text" id="name" placeholder="твой ник">
                 <textarea id="content" rows="3" placeholder="напиши что думаешь..."></textarea>
                 <button id="sendBtn" class="submit-btn" onclick="addReview()">опубликовать</button>
-                <div id="cooldownText" style="font-size: 9px; color: var(--accent); margin-top: 10px; text-align: center; display: none;">ждем минуту...</div>
+                <div id="cooldownText" style="font-size: 10px; color: var(--accent); margin-top: 12px; text-align: center; display: none; font-weight: bold;">ждем минуту...</div>
             </div>
 
             <div id="reviews-list">
@@ -110,11 +125,14 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const langData = {
-            ru: { sub: "java 1.21.4 // pc & mobile", dl: "скачать jar", beta: "купить beta", rev: "live_feed", nick: "твой ник", text: "напиши что думаешь...", send: "опубликовать" },
-            en: { sub: "java 1.21.4 // pc & mobile", dl: "download jar", beta: "buy beta", rev: "live_feed", nick: "your nick", text: "write a review...", send: "publish" }
+            ru: { sub: "java 1.21.4 // pc & mobile", dl: "скачать jar", beta: "купить beta", rev: "live_feed", nick: "твой ник", text: "напиши что думаешь...", send: "опубликовать", alert: "слишком коротко", wait: "ждем минуту..." },
+            en: { sub: "java 1.21.4 // pc & mobile", dl: "download jar", beta: "buy beta", rev: "live_feed", nick: "your nick", text: "write a review...", send: "publish", alert: "too short", wait: "wait 1 min..." }
         };
 
+        let currentLang = 'ru';
+
         function setLang(lang) {
+            currentLang = lang;
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             document.getElementById('sub-text').innerText = langData[lang].sub;
@@ -124,6 +142,7 @@
             document.getElementById('name').placeholder = langData[lang].nick;
             document.getElementById('content').placeholder = langData[lang].text;
             document.getElementById('sendBtn').innerText = langData[lang].send;
+            document.getElementById('cooldownText').innerText = langData[lang].wait;
         }
 
         async function loadReviews() {
@@ -144,7 +163,7 @@
             const btn = document.getElementById('sendBtn');
             const cd = document.getElementById('cooldownText');
 
-            if(n.length < 2 || c.length < 3) return alert("слишком коротко");
+            if(n.length < 2 || c.length < 3) return alert(langData[currentLang].alert);
 
             // ANTI-SPAM: Cooldown 60s
             const lastSent = localStorage.getItem('lastReview');
@@ -154,6 +173,7 @@
             }
 
             btn.disabled = true;
+            btn.innerText = '...';
             const { error } = await _supabase.from('reviews').insert([{ name: n, content: c }]);
             
             if(!error) {
@@ -163,16 +183,24 @@
                 cd.style.display = 'none';
             }
             btn.disabled = false;
+            btn.innerText = langData[currentLang].send;
         }
 
         loadReviews();
-        // Particles (White dots)
+
+        // ЧАСТИЦЫ - УЛУЧШЕННЫЕ И ГЛУБОКИЕ
         const canvas = document.getElementById('particleCanvas'); const ctx = canvas.getContext('2d'); let pArr = [];
-        function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; pArr = []; for(let i=0; i<40; i++) pArr.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.1, vy:(Math.random()-0.5)*0.1}); }
-        function draw() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(255,255,255,0.1)'; pArr.forEach(p => { p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,0.8,0,Math.PI*2); ctx.fill(); }); requestAnimationFrame(draw); }
+        function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; pArr = []; for(let i=0; i<60; i++) pArr.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.2, vy:(Math.random()-0.5)*0.2, size: Math.random()*1.5, opacity: Math.random() }); }
+        function draw() { 
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(138, 43, 226, 0.3)'; // Фиолетовое свечение
+            pArr.forEach(p => { 
+                p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill(); 
+            }); requestAnimationFrame(draw); 
+        }
         window.onresize = init; init(); draw();
         ScrollReveal().reveal('.reveal', { delay: 100, distance: '10px', origin: 'bottom', interval: 50 });
     </script>
 </body>
 </html>
+
 
