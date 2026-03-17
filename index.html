@@ -8,83 +8,55 @@
     <script src="https://unpkg.com/scrollreveal"></script>
     <style>
         :root {
-            --bg: #050508;
+            --bg: #030305;
             --accent: #8a2be2;
-            --accent-glow: rgba(138, 43, 226, 0.4);
+            --border: rgba(138, 43, 226, 0.2);
             --card-bg: rgba(255, 255, 255, 0.01);
-            --border: rgba(138, 43, 226, 0.15);
-            --text-main: #eee;
-            --text-dim: #555;
+            --text-main: #ffffff;
+            --text-dim: #444;
         }
 
         #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         body { background-color: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; text-transform: lowercase; }
-        .container { width: 92%; max-width: 480px; padding: 40px 0; position: relative; z-index: 1; }
+        .container { width: 92%; max-width: 460px; padding: 40px 0; position: relative; z-index: 1; }
         
-        /* ЛЕНГ СВИТЧЕР - НА СТИЛЕ */
-        .lang-switch { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 30px; }
-        .lang-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 4px 12px; border-radius: 6px; font-size: 11px; transition: 0.3s; }
-        .lang-btn.active { border-color: var(--accent); color: #fff; box-shadow: 0 0 10px var(--accent-glow); }
+        /* Lang Switch */
+        .lang-switch { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 25px; }
+        .lang-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 5px 12px; border-radius: 6px; font-size: 10px; transition: 0.3s; }
+        .lang-btn.active { border-color: var(--accent); color: #fff; box-shadow: 0 0 10px rgba(138, 43, 226, 0.3); }
 
-        /* ХЕДЕР С ГЛОУ */
-        .header-card { text-align: center; margin-bottom: 40px; }
-        .logo { width: 90px; height: 90px; border-radius: 25px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 0 25px rgba(138, 43, 226, 0.15); }
-        h1 { font-size: 26px; letter-spacing: 5px; margin: 0; font-weight: 300; color: #fff; }
-        .subtitle { font-size: 11px; color: var(--accent); margin-top: 5px; letter-spacing: 2px; }
+        .header-card { text-align: center; margin-bottom: 50px; }
+        .logo { width: 80px; height: 80px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 0 30px rgba(138, 43, 226, 0.1); margin-bottom: 15px; }
+        h1 { font-size: 24px; letter-spacing: 6px; font-weight: 200; margin: 0; }
+        .subtitle { color: var(--accent); font-size: 10px; letter-spacing: 2px; margin-top: 5px; }
 
-        /* КНОПКИ С ГЛОУ */
-        .btn-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 50px; }
-        .btn { 
-            background: var(--card-bg); border: 1px solid var(--border); 
-            padding: 20px; border-radius: 16px; color: #fff; 
-            text-decoration: none; text-align: center; transition: 0.3s; 
-            backdrop-filter: blur(15px); font-size: 15px; letter-spacing: 1px;
-        }
-        .btn:hover { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); transform: translateY(-3px); }
+        .btn-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 60px; }
+        .btn { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 14px; color: #fff; text-decoration: none; text-align: center; backdrop-filter: blur(10px); transition: 0.3s; font-size: 14px; }
+        .btn:hover { border-color: var(--accent); box-shadow: 0 0 20px rgba(138, 43, 226, 0.2); transform: translateY(-2px); }
 
-        /* СИСТЕМА ОТЗЫВОВ - АХУЕННО */
-        .section-label { font-size: 9px; color: var(--text-dim); margin-bottom: 25px; display: block; text-align: center; letter-spacing: 5px; text-transform: uppercase; }
+        /* ОТДЕЛЬНЫЙ БЛОК: ФОРМА */
+        .section-box { background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 40px; backdrop-filter: blur(15px); }
+        .label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 4px; display: block; margin-bottom: 20px; text-align: center; }
         
-        .review-form { 
-            background: rgba(255,255,255,0.01); border: 1px solid var(--border); 
-            padding: 25px; border-radius: 20px; margin-bottom: 35px; backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        
-        input, textarea { 
-            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.03); 
-            color: #fff; padding: 14px; border-radius: 12px; outline: none; 
-            font-family: inherit; font-size: 14px; margin-bottom: 15px; box-sizing: border-box;
-            transition: 0.3s;
-        }
-        input:focus, textarea:focus { border-color: var(--accent); background: rgba(138, 43, 226, 0.05); }
+        input, textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 10px; color: #fff; padding: 12px; margin-bottom: 15px; outline: none; font-family: inherit; font-size: 13px; box-sizing: border-box; transition: 0.3s; }
+        input:focus, textarea:focus { border-color: var(--accent); }
+        .submit-btn { width: 100%; background: var(--accent); color: #fff; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; text-transform: lowercase; transition: 0.3s; }
+        .submit-btn:hover { filter: brightness(1.2); box-shadow: 0 0 20px rgba(138, 43, 226, 0.4); }
+        .submit-btn:disabled { background: #111; color: #333; cursor: not-allowed; }
 
-        .submit-btn { 
-            width: 100%; background: var(--accent); color: #fff; border: none; padding: 16px; 
-            border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s;
-            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4);
-        }
-        .submit-btn:hover { transform: scale(1.01); filter: brightness(1.1); }
-        .submit-btn:disabled { background: #222; color: #555; cursor: not-allowed; box-shadow: none; }
+        /* ОТДЕЛЬНЫЙ БЛОК: ПУБЛИЧНЫЕ ОТЗЫВЫ */
+        .public-reviews-wrap { width: 100%; }
+        #reviews-list { display: flex; flex-direction: column; gap: 15px; }
+        .review-item { background: rgba(138, 43, 226, 0.03); border-left: 2px solid var(--accent); padding: 20px; border-radius: 0 15px 15px 0; backdrop-filter: blur(5px); animation: revealReview 0.5s ease-out forwards; }
+        @keyframes revealReview { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        .rev-nick { color: var(--accent); font-weight: bold; font-size: 11px; margin-bottom: 8px; display: block; }
+        .rev-text { color: #ccc; font-size: 13px; line-height: 1.5; text-transform: none; }
 
-        /* ЛЕНТА ОТЗЫВОВ - КАЙФ */
-        #reviews-list { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-        .review-card { 
-            background: rgba(255,255,255,0.01); border-left: 3px solid var(--accent); 
-            padding: 18px; border-radius: 0 16px 16px 0; 
-            backdrop-filter: blur(5px);
-            animation: slideInLeft 0.5s ease-out forwards;
-        }
-        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
-        .review-author { color: var(--accent); font-size: 11px; margin-bottom: 7px; display: block; font-weight: bold; letter-spacing: 1px; }
-        .review-text { color: #ccc; font-size: 14px; line-height: 1.5; text-transform: none; }
-
-        .footer { text-align: center; padding: 50px 0; font-size: 9px; color: #1a1a1a; letter-spacing: 2px; }
+        .footer { text-align: center; padding: 60px 0; font-size: 8px; color: #111; letter-spacing: 5px; }
     </style>
 </head>
 <body>
     <canvas id="particleCanvas"></canvas>
-
     <div class="container">
         <div class="lang-switch">
             <button class="lang-btn active" onclick="setLang('ru')">ru</button>
@@ -99,24 +71,23 @@
 
         <div class="btn-container reveal">
             <a href="https://t.me/chudovisheclient/347" class="btn" id="btn-dl">скачать jar</a>
-            <a href="https://t.me/chudovisheclient/376" class="btn" id="btn-beta" style="opacity: 0.6; border-color: #333;">купить beta</a>
+            <a href="https://t.me/chudovisheclient/376" class="btn" id="btn-beta" style="border-color: #222;">купить beta</a>
         </div>
 
-        <div class="section reveal">
-            <span class="section-label" id="rev-title">live_feed</span>
-            
-            <div class="review-form">
-                <input type="text" id="name" placeholder="твой ник">
-                <textarea id="content" rows="3" placeholder="напиши что думаешь..."></textarea>
-                <button id="sendBtn" class="submit-btn" onclick="addReview()">опубликовать</button>
-                <div id="cooldownText" style="font-size: 10px; color: var(--accent); margin-top: 12px; text-align: center; display: none; font-weight: bold;">ждем минуту...</div>
-            </div>
+        <div class="section-box reveal">
+            <span class="label" id="lbl-form">оставить отзыв</span>
+            <input type="text" id="name" placeholder="ник в tg">
+            <textarea id="content" rows="3" placeholder="сообщение..."></textarea>
+            <button id="sendBtn" class="submit-btn" onclick="addReview()">отправить</button>
+        </div>
 
+        <div class="public-reviews-wrap reveal">
+            <span class="label" id="lbl-public">публичные отзывы</span>
             <div id="reviews-list">
                 </div>
         </div>
-        
-        <div class="footer">recidivismnational // static_system</div>
+
+        <div class="footer">recidivismnational // stat_sys</div>
     </div>
 
     <script>
@@ -125,24 +96,21 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const langData = {
-            ru: { sub: "java 1.21.4 // pc & mobile", dl: "скачать jar", beta: "купить beta", rev: "live_feed", nick: "твой ник", text: "напиши что думаешь...", send: "опубликовать", alert: "слишком коротко", wait: "ждем минуту..." },
-            en: { sub: "java 1.21.4 // pc & mobile", dl: "download jar", beta: "buy beta", rev: "live_feed", nick: "your nick", text: "write a review...", send: "publish", alert: "too short", wait: "wait 1 min..." }
+            ru: { sub: "java 1.21.4 // pc & mobile", dl: "скачать jar", beta: "купить beta", f: "оставить отзыв", p: "публичные отзывы", n: "ник в tg", m: "сообщение...", s: "отправить" },
+            en: { sub: "java 1.21.4 // pc & mobile", dl: "download jar", beta: "buy beta", f: "leave a review", p: "public reviews", n: "tg nickname", m: "message...", s: "send" }
         };
 
-        let currentLang = 'ru';
-
         function setLang(lang) {
-            currentLang = lang;
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             document.getElementById('sub-text').innerText = langData[lang].sub;
             document.getElementById('btn-dl').innerText = langData[lang].dl;
             document.getElementById('btn-beta').innerText = langData[lang].beta;
-            document.getElementById('rev-title').innerText = langData[lang].rev;
-            document.getElementById('name').placeholder = langData[lang].nick;
-            document.getElementById('content').placeholder = langData[lang].text;
-            document.getElementById('sendBtn').innerText = langData[lang].send;
-            document.getElementById('cooldownText').innerText = langData[lang].wait;
+            document.getElementById('lbl-form').innerText = langData[lang].f;
+            document.getElementById('lbl-public').innerText = langData[lang].p;
+            document.getElementById('name').placeholder = langData[lang].n;
+            document.getElementById('content').placeholder = langData[lang].m;
+            document.getElementById('sendBtn').innerText = langData[lang].s;
         }
 
         async function loadReviews() {
@@ -150,9 +118,9 @@
             const list = document.getElementById('reviews-list');
             if (!data || data.length === 0) return;
             list.innerHTML = data.map(r => `
-                <div class="review-card">
-                    <span class="review-author">@${r.name}</span>
-                    <p class="review-text">${r.content}</p>
+                <div class="review-item">
+                    <span class="rev-nick">@${r.name}</span>
+                    <p class="rev-text">${r.content}</p>
                 </div>
             `).join('');
         }
@@ -160,42 +128,36 @@
         async function addReview() {
             const n = document.getElementById('name').value;
             const c = document.getElementById('content').value;
-            const btn = document.getElementById('sendBtn');
-            const cd = document.getElementById('cooldownText');
-
-            if(n.length < 2 || c.length < 3) return alert(langData[currentLang].alert);
-
-            // ANTI-SPAM: Cooldown 60s
-            const lastSent = localStorage.getItem('lastReview');
-            if(lastSent && Date.now() - lastSent < 60000) {
-                cd.style.display = 'block';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerText = '...';
-            const { error } = await _supabase.from('reviews').insert([{ name: n, content: c }]);
+            const b = document.getElementById('sendBtn');
+            if(n.length < 2 || c.length < 2) return;
             
+            const last = localStorage.getItem('sent');
+            if(last && Date.now() - last < 60000) return alert("wait 1 min");
+
+            b.disabled = true;
+            const { error } = await _supabase.from('reviews').insert([{ name: n, content: c }]);
             if(!error) {
-                localStorage.setItem('lastReview', Date.now());
+                localStorage.setItem('sent', Date.now());
                 document.getElementById('content').value = '';
                 loadReviews();
-                cd.style.display = 'none';
             }
-            btn.disabled = false;
-            btn.innerText = langData[currentLang].send;
+            b.disabled = false;
         }
 
         loadReviews();
 
-        // ЧАСТИЦЫ - УЛУЧШЕННЫЕ И ГЛУБОКИЕ
+        // АХУЕННЫЕ ПАРТИКЛЫ
         const canvas = document.getElementById('particleCanvas'); const ctx = canvas.getContext('2d'); let pArr = [];
-        function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; pArr = []; for(let i=0; i<60; i++) pArr.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.2, vy:(Math.random()-0.5)*0.2, size: Math.random()*1.5, opacity: Math.random() }); }
-        function draw() { 
-            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(138, 43, 226, 0.3)'; // Фиолетовое свечение
-            pArr.forEach(p => { 
-                p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill(); 
-            }); requestAnimationFrame(draw); 
+        function init() { 
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight; pArr = [];
+            for(let i=0; i<50; i++) pArr.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.2, vy:(Math.random()-0.5)*0.2});
+        }
+        function draw() {
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(138, 43, 226, 0.4)';
+            pArr.forEach(p => {
+                p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill();
+            }); requestAnimationFrame(draw);
         }
         window.onresize = init; init(); draw();
         ScrollReveal().reveal('.reveal', { delay: 100, distance: '10px', origin: 'bottom', interval: 50 });
