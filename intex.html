@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chudovishe // client</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <style>
+        :root {
+            --bg: #080510;
+            --accent: #8a2be2;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-dim: #707070;
+        }
+
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        body { background-color: var(--bg); color: var(--text-main); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; text-transform: lowercase; }
+        .container { width: 90%; max-width: 500px; padding: 40px 0; position: relative; z-index: 1; }
+        
+        /* Lang Switcher */
+        .lang-switch { display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 20px; }
+        .lang-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 5px 10px; border-radius: 5px; font-size: 12px; transition: 0.3s; }
+        .lang-btn.active { border-color: var(--accent); color: #fff; }
+
+        .header-card { text-align: center; margin-bottom: 40px; }
+        .logo { width: 90px; height: 90px; border-radius: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
+        h1 { font-size: 22px; letter-spacing: 2px; margin: 0; font-weight: normal; }
+        .subtitle { font-size: 12px; color: var(--accent); margin-top: 5px; }
+
+        .btn-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 40px; }
+        .btn { background: var(--glass); border: 1px solid var(--border); padding: 18px; border-radius: 12px; color: #fff; text-decoration: none; text-align: center; transition: 0.3s; backdrop-filter: blur(10px); }
+        .btn:hover { border-color: var(--accent); background: rgba(138, 43, 226, 0.05); }
+
+        .review-form { background: rgba(255,255,255,0.01); border: 1px dashed var(--border); padding: 20px; border-radius: 12px; margin-bottom: 25px; }
+        input, textarea { width: 100%; background: none; border: none; border-bottom: 1px solid var(--border); color: #fff; margin-bottom: 15px; padding: 8px 0; outline: none; font-family: inherit; font-size: 14px; }
+        button { width: 100%; background: var(--accent); color: #fff; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; text-transform: lowercase; }
+        
+        .review-card { background: var(--glass); border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 10px; }
+        .review-author { color: var(--accent); font-size: 13px; margin-bottom: 5px; display: block; }
+        .review-text { color: #ccc; font-size: 13px; margin: 0; line-height: 1.4; }
+
+        .footer { text-align: center; padding: 40px 0; font-size: 10px; color: #333; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+    <canvas id="particleCanvas"></canvas>
+    <div class="container">
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLang('ru')">ru</button>
+            <button class="lang-btn" onclick="setLang('en')">en</button>
+        </div>
+
+        <div class="header-card reveal">
+            <img src="https://t.me/i/userpic/160/chudovisheclient.jpg" alt="logo" class="logo">
+            <h1>chudovishe</h1>
+            <div class="subtitle" id="sub-text">java 1.21.4 // pc & mobile</div>
+        </div>
+
+        <div class="btn-container reveal">
+            <a href="https://t.me/chudovisheclient/347" class="btn" id="btn-dl">скачать jar</a>
+            <a href="https://t.me/chudovisheclient/376" class="btn" id="btn-beta" style="border-color: #555;">купить beta</a>
+        </div>
+
+        <div class="section reveal">
+            <span style="font-size: 10px; color: var(--text-dim); margin-bottom: 15px; display: block; text-align: center;" id="rev-title">отзывы</span>
+            <div class="review-form">
+                <input type="text" id="name" placeholder="твой ник">
+                <textarea id="content" rows="2" placeholder="текст..."></textarea>
+                <button id="sendBtn" onclick="addReview()">опубликовать</button>
+            </div>
+            <div id="reviews-list"></div>
+        </div>
+        <div class="footer">recidivismnational // 2026</div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://bgcvgxebtyiinxqaqqwcm.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnY3ZneGVidHlpbnhxYXFxd2NtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzkwMTksImV4cCI6MjA4OTM1NTAxOX0.DYe_JAg7v054T4sVwb8jEyxFi4XND_D_tu323FSuJuo';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const langData = {
+            ru: { sub: "java 1.21.4 // pc & mobile", dl: "скачать jar", beta: "купить beta", rev: "отзывы", nick: "твой ник", text: "текст...", send: "опубликовать", load: "загрузка..." },
+            en: { sub: "java 1.21.4 // pc & mobile", dl: "download jar", beta: "buy beta", rev: "reviews", nick: "your nick", text: "message...", send: "publish", load: "loading..." }
+        };
+
+        function setLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('sub-text').innerText = langData[lang].sub;
+            document.getElementById('btn-dl').innerText = langData[lang].dl;
+            document.getElementById('btn-beta').innerText = langData[lang].beta;
+            document.getElementById('rev-title').innerText = langData[lang].rev;
+            document.getElementById('name').placeholder = langData[lang].nick;
+            document.getElementById('content').placeholder = langData[lang].text;
+            document.getElementById('sendBtn').innerText = langData[lang].send;
+        }
+
+        async function loadReviews() {
+            const { data } = await _supabase.from('reviews').select('*').order('created_at', { ascending: false });
+            const list = document.getElementById('reviews-list');
+            if (!data || data.length === 0) { list.innerHTML = ''; return; }
+            list.innerHTML = data.map(r => `<div class="review-card"><span class="review-author">@${r.name}</span><p class="review-text">${r.content}</p></div>`).join('');
+        }
+
+        async function addReview() {
+            const n = document.getElementById('name').value; const c = document.getElementById('content').value;
+            if(!n || !c) return;
+            await _supabase.from('reviews').insert([{ name: n, content: c }]);
+            document.getElementById('content').value = ''; loadReviews();
+        }
+
+        loadReviews();
+        // Particles
+        const canvas = document.getElementById('particleCanvas'); const ctx = canvas.getContext('2d'); let pArr = [];
+        function init() { 
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight; pArr = [];
+            for(let i=0; i<40; i++) pArr.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.2, vy:(Math.random()-0.5)*0.2});
+        }
+        function draw() {
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            pArr.forEach(p => { 
+                p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0; if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
+                ctx.beginPath(); ctx.arc(p.x,p.y,1,0,Math.PI*2); ctx.fill();
+            }); requestAnimationFrame(draw);
+        }
+        window.onresize = init; init(); draw();
+        ScrollReveal().reveal('.reveal', { delay: 100, distance: '10px', origin: 'bottom', interval: 50 });
+    </script>
+</body>
+</html>
