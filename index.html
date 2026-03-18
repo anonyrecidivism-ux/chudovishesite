@@ -543,4 +543,32 @@
         const color = getAccentColor();
         particles.forEach(p => {
             pctx.fillStyle = color;
+            pctx.globalAlpha = p.opacity;
+            p.y -= p.v;
+            if (p.y < -30) {
+                p.y = canvas.height + 30;
+                p.x = Math.random() * canvas.width;
+            }
+            pctx.fillText(':3', p.x, p.y);
+        });
+        pctx.globalAlpha = 1;
+        requestAnimationFrame(drawParticles);
+    }
+
+    // thock на любое нажатие (кроме карточек — там уже есть)
+    document.addEventListener('pointerdown', (e) => {
+        if (!e.target.closest('.user-card')) playBeep();
+    });
+
+    window.addEventListener('resize', initParticles);
+    initParticles();
+    drawParticles();
+
+    /* ===== SCROLL REVEAL ===== */
+    ScrollReveal().reveal('.reveal',      { delay: 100, distance: '20px', origin: 'bottom', duration: 1000 });
+    ScrollReveal().reveal('.reveal-card', { delay: 50,  distance: '15px', origin: 'right',  interval: 80,  duration: 800 });
+</script>
+
+</body>
+</html>
 
