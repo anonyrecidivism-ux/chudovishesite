@@ -9,9 +9,9 @@
     <style>
         :root {
             --bg: #030305;
-            --term-bg: rgba(20, 10, 25, 0.7);
+            --term-bg: rgba(20, 10, 25, 0.75);
             --accent: #ff007f;
-            --accent-glow: rgba(255, 0, 127, 0.5);
+            --accent-glow: rgba(255, 0, 127, 0.6);
             --text-main: #e0e0e0;
             --text-dim: #444;
             --border: rgba(255, 0, 127, 0.25);
@@ -30,6 +30,7 @@
             align-items: center;
         }
 
+        /* ПАРТИКЛЫ :3 */
         #particleCanvas {
             position: fixed;
             top: 0; left: 0;
@@ -53,13 +54,11 @@
         .lang-btn { background: rgba(255,255,255,0.02); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 6px 12px; font-family: var(--font-mono); font-size: 11px; border-radius: 8px; }
         .lang-btn.active { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
 
-        /* ASCII ФИКС - ЦЕНТР И МАСШТАБ */
         .ascii-wrap {
             width: 100%;
             display: flex;
             justify-content: center;
             margin-bottom: 40px;
-            pointer-events: none;
         }
         .ascii-logo {
             color: var(--accent);
@@ -79,7 +78,6 @@
             text-align: center;
             width: 100%;
             backdrop-filter: blur(25px);
-            box-sizing: border-box;
             box-shadow: 0 10px 40px rgba(0,0,0,0.4);
         }
         .term-title { color: var(--accent); font-size: 28px; letter-spacing: 6px; font-family: var(--font-mono); font-weight: 600; text-shadow: 0 0 15px var(--accent-glow); }
@@ -97,11 +95,7 @@
             width: 100%;
             box-sizing: border-box;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .info-block b { color: var(--accent); }
-
-        .section-label { font-size: 10px; color: var(--text-dim); margin: 30px 0 25px 0; letter-spacing: 6px; text-transform: uppercase; font-family: var(--font-mono); width: 100%; text-align: center; }
 
         #team-grid {
             display: grid;
@@ -111,27 +105,33 @@
             perspective: 1200px;
         }
         
-        .card-link { text-decoration: none; color: inherit; display: block; border-radius: 20px; }
-        
         .card {
             background: var(--term-bg);
             border: 1px solid var(--border);
             padding: 25px;
             border-radius: 20px;
             backdrop-filter: blur(15px);
-            transition: transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
+            transition: transform 0.1s ease-out, box-shadow 0.3s ease, background 0.3s ease;
             text-align: center;
             cursor: pointer;
             transform-style: preserve-3d;
+            position: relative;
         }
         .card:hover { 
             border-color: var(--accent); 
-            box-shadow: 0 15px 45px rgba(255, 0, 127, 0.35); 
-            background: rgba(255, 0, 127, 0.08);
+            box-shadow: 0 15px 45px rgba(255, 0, 127, 0.3); 
+        }
+
+        /* Вдавливание при клике */
+        .card.active-click {
+            transform: scale(0.92) translateZ(-30px) !important;
+            background: rgba(255, 0, 127, 0.3);
+            box-shadow: 0 0 50px var(--accent);
+            border-color: #fff;
         }
         
-        .nick { font-weight: 600; color: #fff; font-size: 18px; font-family: var(--font-mono); letter-spacing: 1px; }
-        .role { color: var(--accent); font-size: 12px; margin-top: 8px; font-family: var(--font-mono); opacity: 0.9; letter-spacing: 1.5px; }
+        .nick { font-weight: 600; color: #fff; font-size: 18px; font-family: var(--font-mono); pointer-events: none; }
+        .role { color: var(--accent); font-size: 12px; margin-top: 8px; font-family: var(--font-mono); opacity: 0.9; pointer-events: none; }
 
         .footer {
             text-align: center;
@@ -139,14 +139,11 @@
             font-size: 10px;
             color: #1a1a1a;
             letter-spacing: 6px;
-            font-family: var(--font-mono);
         }
 
         @media (max-width: 600px) {
-            .term-title { font-size: 22px; }
             .ascii-logo { font-size: 2px; line-height: 2px; }
             .container { width: 95%; }
-            .card { padding: 20px; }
         }
     </style>
 </head>
@@ -255,59 +252,65 @@
 
         const grid = document.getElementById('team-grid');
         grid.innerHTML = team.map(m => `
-            <a href="https://t.me/${m.n.replace('@', '')}" target="_blank" class="card-link reveal-card">
-                <div class="card">
-                    <div class="nick">${m.n}</div>
-                    <div class="role">${lang === 'ru' ? m.r : m.e}</div>
-                </div>
-            </a>
+            <div class="card reveal-card" data-tg="${m.n.replace('@', '')}">
+                <div class="nick">${m.n}</div>
+                <div class="role">${lang === 'ru' ? m.r : m.e}</div>
+            </div>
         `).join('');
 
         ScrollReveal().reveal('.reveal-card', { delay: 50, distance: '15px', origin: 'bottom', interval: 40, duration: 600 });
-        add3DEffect();
+        initTiltAndClick();
     }
 
-    const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    function initParticles() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        particles = [];
-        for(let i=0; i<40; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                v: 0.15 + Math.random() * 0.35,
-                size: 1.5 + Math.random() * 3
-            });
-        }
-    }
-    function drawParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'rgba(255, 0, 127, 0.12)';
-        particles.forEach(p => {
-            p.y -= p.v;
-            if(p.y < -10) p.y = canvas.height + 10;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fill();
-        });
-        requestAnimationFrame(drawParticles);
-    }
-
-    function add3DEffect() {
+    function initTiltAndClick() {
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
                 const x = (e.clientX - rect.left) / rect.width - 0.5;
                 const y = (e.clientY - rect.top) / rect.height - 0.5;
-                card.style.transform = `rotateX(${y * -12}deg) rotateY(${x * 12}deg) translateY(-8px)`;
+                card.style.transform = `rotateX(${y * -15}deg) rotateY(${x * 15}deg) translateY(-5px)`;
             });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `rotateX(0deg) rotateY(0deg) translateY(0)`;
+            card.addEventListener('mouseleave', () => { card.style.transform = `rotateX(0deg) rotateY(0deg) translateY(0)`; });
+            card.addEventListener('click', () => {
+                card.classList.add('active-click');
+                const tgUser = card.getAttribute('data-tg');
+                setTimeout(() => {
+                    window.open(`https://t.me/${tgUser}`, '_blank');
+                    card.classList.remove('active-click');
+                }, 1000);
             });
         });
+    }
+
+    // ПАРТИКЛЫ :3 ENGINE
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function initParticles() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        particles = [];
+        for(let i=0; i<15; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                v: 0.2 + Math.random() * 0.4,
+                size: 14 + Math.random() * 6
+            });
+        }
+    }
+
+    function drawParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255, 0, 127, 0.15)';
+        ctx.font = '16px monospace';
+        particles.forEach(p => {
+            p.y -= p.v;
+            if(p.y < -20) p.y = canvas.height + 20;
+            ctx.fillText(':3', p.x, p.y);
+        });
+        requestAnimationFrame(drawParticles);
     }
 
     window.addEventListener('resize', initParticles);
