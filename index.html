@@ -9,7 +9,7 @@
         :root {
             --bg: #0a0a0a;
             --term-bg: #121212;
-            --accent: #ff007f; /* Яскраво-рожевий */
+            --accent: #ff007f; /* Ярко-розовый */
             --accent-glow: rgba(255, 0, 127, 0.4);
             --text: #d0d0d0;
             --dim: #333;
@@ -25,25 +25,31 @@
             text-transform: lowercase;
         }
 
-        .container { width: 92%; max-width: 800px; margin: 0 auto; padding: 40px 0; display: flex; flex-direction: column; align-items: center; }
+        /* ПАРТИКЛЫ-ПИПИСЬКИ */
+        #particleCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container { width: 92%; max-width: 800px; margin: 0 auto; padding: 40px 0; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
 
         .lang-switch { display: flex; gap: 15px; justify-content: flex-end; width: 100%; margin-bottom: 25px; }
         .lang-btn { background: none; border: 1px solid var(--border); color: var(--dim); cursor: pointer; padding: 5px 12px; font-family: inherit; font-size: 11px; }
         .lang-btn.active { color: var(--accent); border-color: var(--accent); }
 
-        /* ЛОГОТИП ЮІ (ЗАШИТИЙ НАМЕРТВО) */
-        .logo-wrap {
-            margin-bottom: 40px;
-            position: relative;
-        }
-        .clan-logo {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 30px var(--accent-glow);
-            object-fit: cover;
-            filter: contrast(1.1);
+        /* ASCII ЛОГО (Твоя Юи) */
+        .ascii-logo {
+            color: var(--accent);
+            font-size: 4px; /* Уменьшил, чтобы не было огромной суки */
+            line-height: 4px;
+            white-space: pre;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 0 5px var(--accent-glow));
+            text-align: center;
+            opacity: 0.8;
         }
 
         .terminal-header {
@@ -102,15 +108,57 @@
 </head>
 <body>
 
+<canvas id="particleCanvas"></canvas>
+
 <div class="container">
     <div class="lang-switch">
         <button class="lang-btn active" id="btn-ru" onclick="setLang('ru')">ru</button>
         <button class="lang-btn" id="btn-en" onclick="setLang('en')">en</button>
     </div>
 
-    <div class="logo-wrap">
-        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqGhf/aAAwDAQACEQMRAD8A9/ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==" alt="yui_logo" class="clan-logo">
-    </div>
+    <pre class="ascii-logo">
+....:::-=-::::-----------------------------==---=-=.....-=----------------------------------===-====
+....:::-=-::::----------------------------...............:-...-=-----------------------------=-=====
+....::--=-::::------------------------..:-.......::......:......:=----------------------------=--===
+....:::-=:::::---------------------=...........::---:::.::.......=-=--------------------------------
+....:::-=:::::---------------------=......:-.:=+*******+-..-....=....-------------------------------
+....:::-=:::::-------------------:..:..::=******************+-:-:.....------------------------------
+....:::-=:::::-----------------=.....-=************************+::....:-----------------------------
+....:::-=::::------------------....-+****************************+-..::=----------------------------
+:::::::-=::::--------------*#%%#..+**********#************#********=-....---------------------------
+:::::---=:::----------------=-...+********+**##******=*****#***+*+**=:...---------------------------
+::::-::-=:::-----------------...:*+*******--*###*****-:-***###*+*++*#-...:--------------------------
+.:::-::-=::------------------...++**+****-::+**#*****=:.:=**##**+*+***-:-=--------------------------
+....:::-=::-----------------++-:*+**+=---...=*-*#****+.::::+#*#***+***+:.---------------------------
+....:::-=::-----------------+..-*+******::-::+=:+#****:.::::=*****+***+..---------------------------
+....::::-::-----------------*..=++*****--....:+:.-#***=......-****+****..=--------------------------
+....::::-::----------------+*=.+*+++***:...:::....:***=..::...+********:**--------------------------
+....::::-::----------------+***=*+**+==..:+**=:....:-*+.:=**-:=***********--------------------------
+....:.::-::---------------+=**********=.=%*=++=......:+.===+%#:***********--------------------------
+....:.::-::-------------:---**********--#=*.%%-.........**-%%**=****#*****=-------------------------
+....:.::-:--------------:=--****#*****:#-*@@@@*:.......:%@@@@=#-**#*******=-------------------------
+....:.::-::------------:----****#*****-::+@**==:.......:%#**#+*#*******+--------------------------
+......::-::--------:::::----+***###**#=...-+=-..........:-+*:.:+#********+-=------------------------
+.......:-::::::::::::::=-:-=****#%***##:.................::...-##**#%****=--------------------------
+.......:-::::::::::::::-::-*+***##****#+....::.....:..........+#***##***#=--------------------------
+....:..:-:::::::::::::=::-*-:***#%****##:....................-#****%#****=--------------------------
+ ......:-::::::::::::-::-=:::=**#%#****##-:........::.......:##***#%#***==--------------------------
+.......:-::::::::::::-:::::::-**#%#*****#%#+:.............:*%#***#%%***+----------------------------
+......::-::::::::::.-:::::::::-**+*******#%%##*=:.....:=*###*****%%#***-----------------------------
+......::-:::::::::::-::::::::::-*=-*##****#%*-+----==-----##***#%%+=**------------------------------
+.......:-::::::::-==::::::--..:----+%%#*****---=------=----***###=-==--:..--------------------------
+....:.::-::::::::+#=::::::=-:....:=#**-=#**+-----==-=-----=*++--:-:--.....:-------------------------
+....:.::-:::::::-*%#*+++::=--.....:#*=--:.:-------=#*-----+----:--:........-------------------------
+....::::-::::::-+*::+##-::--=...::.-....+....:----#%%+-----:..+...:......:=-------------------------
+....:.::-:::::::=-::-*#-::--=#:...--....##-.....=%%%%%+:....=#+....:.:...=*-------------------------
+....::::-::::::-=:::-==:::-=##+....:....####+-=########-.:*###=....-.....-##------------------------
+....::::-::::::=-:::--=:::-###+.....:...*#####################:....-.....-##*-----------------------
+....::::-::::::=::::--=:::+###*-:.......=#####################....:::=...*###-----------------------
+::::::::-:::::=-::::--=:::+#####...:.:...####################=....:-...:####*-----------------------
+...::.::-::::--:::::-:=:::+####%:...::...+###################:....-....:#%%#+-----------------------
+:::::-::-::::=::::::-:=:::=####%:....:.-.-#####%%%%##%%######..:.-.....=%%##------------------------
+-------=-:::--::::::-:=:::=####%%*=..:.:..#######%%%########:.:..:=-=*######+-----------------------
+    </pre>
 
     <header class="terminal-header">
         <div class="term-title" id="t-head">blood ravens</div>
@@ -169,7 +217,42 @@
     }
 
     setLang('ru');
+
+    // ПИПИСЬКИ ENGINE
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function init() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        particles = [];
+        for(let i=0; i<15; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                v: 0.5 + Math.random(),
+                size: 10 + Math.random() * 15
+            });
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255, 0, 127, 0.15)';
+        ctx.font = '20px Arial';
+        particles.forEach(p => {
+            p.y -= p.v;
+            if(p.y < -30) p.y = canvas.height + 30;
+            // Рисуем символ
+            ctx.fillText('8==D', p.x, p.y);
+        });
+        requestAnimationFrame(draw);
+    }
+    window.onresize = init;
+    init(); draw();
 </script>
 
 </body>
 </html>
+
