@@ -33,7 +33,6 @@
         .lang-btn { background: none; border: 1px solid var(--border); color: var(--dim); cursor: pointer; padding: 5px 12px; font-family: inherit; font-size: 11px; }
         .lang-btn.active { color: var(--accent); border-color: var(--accent); }
 
-        /* ЮИ - ЗАШИТА НАМЕРТВО, СВЕТИТСЯ */
         .logo-wrap {
             margin-bottom: 45px;
             position: relative;
@@ -44,12 +43,11 @@
         .clan-logo {
             width: 140px;
             height: 140px;
-            border-radius: 50%; /* Сделаем круглой */
+            border-radius: 50%;
             border: 2px solid var(--border);
-            /* Мощное красное неоновое свечение */
             box-shadow: 0 0 35px var(--accent-glow);
             filter: contrast(1.1) brightness(0.98);
-            object-fit: cover; /* Чтобы фотка не сплющилась */
+            object-fit: cover;
         }
 
         .terminal-header {
@@ -117,7 +115,8 @@
     </div>
 
     <div class="logo-wrap reveal">
-        <img src="data:image/jpeg;base64,REPLACE_WITH_BASE64_CODE" alt="yui" class="clan-logo">
+        <!-- 🔥 ВОТ ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ -->
+        <img src="https://images.unsplash.com/photo-1518791841217-8f162f1e1131?q=80&w=400" alt="yui" class="clan-logo">
     </div>
 
     <header class="terminal-header reveal">
@@ -131,8 +130,7 @@
 
     <span class="section-label reveal">[ system_users ]</span>
 
-    <div id="team-grid">
-        </div>
+    <div id="team-grid"></div>
 
     <div class="footer">
         made by @recidivismnational // sys_id_026
@@ -182,8 +180,5 @@
 
 </body>
 </html>
-
-
-
 
 
