@@ -3,78 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>blood ravens // op_center</title>
+    <title>blood ravens // terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/scrollreveal"></script>
     <style>
         :root {
             --bg: #0a0a0a;
             --term-bg: #121212;
-            --accent: #ff007f; /* Ярко-розовый */
+            --accent: #ff007f; /* Яскраво-рожевий */
             --accent-glow: rgba(255, 0, 127, 0.4);
             --text: #d0d0d0;
             --dim: #333;
             --border: #222;
-            --font-mono: 'Fira Code', monospace;
         }
 
         body {
             background-color: var(--bg);
             color: var(--text);
-            font-family: var(--font-mono);
+            font-family: 'Fira Code', monospace;
             margin: 0; padding: 0;
             overflow-x: hidden;
             text-transform: lowercase;
         }
 
-        .container { width: 92%; max-width: 850px; margin: 0 auto; padding: 40px 0; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1;}
+        .container { width: 92%; max-width: 800px; margin: 0 auto; padding: 40px 0; display: flex; flex-direction: column; align-items: center; }
 
         .lang-switch { display: flex; gap: 15px; justify-content: flex-end; width: 100%; margin-bottom: 25px; }
         .lang-btn { background: none; border: 1px solid var(--border); color: var(--dim); cursor: pointer; padding: 5px 12px; font-family: inherit; font-size: 11px; }
         .lang-btn.active { color: var(--accent); border-color: var(--accent); }
 
-        /* ЮИ - ГЛАВНЫЙ ЛОГОТИП (СВЕТИТСЯ РОЗОВЫМ) */
+        /* ЛОГОТИП ЮІ (ЗАШИТИЙ НАМЕРТВО) */
         .logo-wrap {
-            margin-bottom: 45px;
+            margin-bottom: 40px;
             position: relative;
-            cursor: pointer;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .logo-wrap:hover { transform: scale(1.08) rotate(2deg); }
         .clan-logo {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%; /* Круглая */
-            border: 2px solid var(--accent); /* Розовая рамка */
-            box-shadow: 0 0 35px var(--accent-glow); /* Розовый неон */
-            filter: contrast(1.1) brightness(0.98);
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 30px var(--accent-glow);
             object-fit: cover;
+            filter: contrast(1.1);
         }
 
         .terminal-header {
             border-bottom: 1px solid var(--border);
-            padding-bottom: 25px;
-            margin-bottom: 40px;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
             text-align: center;
             width: 100%;
         }
-        .term-title { color: var(--accent); font-size: 26px; letter-spacing: 5px; font-weight: 500; text-shadow: 0 0 10px rgba(255, 0, 127, 0.3); }
-        .term-sub { font-size: 10px; color: var(--dim); margin-top: 6px; letter-spacing: 3px; }
+        .term-title { color: var(--accent); font-size: 26px; letter-spacing: 5px; font-weight: 500; }
+        .term-sub { font-size: 10px; color: var(--dim); margin-top: 5px; letter-spacing: 2px; }
 
         .info-block {
-            margin-bottom: 50px;
-            padding: 22px;
+            margin-bottom: 40px;
+            padding: 20px;
             border: 1px dashed var(--border);
             font-size: 14px;
-            line-height: 1.7;
+            line-height: 1.6;
             width: 100%;
             box-sizing: border-box;
-            background: rgba(255,0,127,0.01);
-            font-weight: 300;
+            background: rgba(255, 0, 127, 0.02);
         }
         .info-block b { color: var(--accent); }
 
-        .section-label { font-size: 11px; color: var(--dim); margin: 30px 0 25px 0; letter-spacing: 5px; text-transform: uppercase; display: block; width: 100%; text-align: left;}
+        .section-label { font-size: 11px; color: var(--dim); margin: 30px 0 20px 0; letter-spacing: 4px; display: block; width: 100%; text-align: left;}
 
         #team-grid {
             display: grid;
@@ -85,53 +79,51 @@
         .card {
             background: var(--term-bg);
             border: 1px solid var(--border);
-            padding: 18px;
-            transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 15px;
+            transition: 0.2s;
             position: relative;
         }
-        .card:hover { border-color: var(--accent); background: rgba(255,0,127,0.02); box-shadow: 0 0 15px rgba(255, 0, 127, 0.05); }
+        .card:hover { border-color: var(--accent); background: rgba(255, 0, 127, 0.03); }
         .card::before { content: ">"; position: absolute; left: 8px; color: var(--accent); opacity: 0; }
         .card:hover::before { opacity: 1; }
         
-        .nick { font-weight: 500; color: #fff; margin-left: 18px; font-size: 15px; }
-        .role { color: var(--accent); font-size: 11px; margin-top: 5px; margin-left: 18px; opacity: 0.8; letter-spacing: 1px; }
+        .nick { font-weight: 500; color: #fff; margin-left: 15px; font-size: 14px; }
+        .role { color: var(--accent); font-size: 11px; margin-top: 5px; margin-left: 15px; opacity: 0.8; }
 
         .footer {
             text-align: center;
-            padding: 90px 0 20px 0;
+            padding: 60px 0 20px 0;
             font-size: 10px;
             color: #1a1a1a;
-            letter-spacing: 5px;
+            letter-spacing: 4px;
             width: 100%;
-            font-weight: 300;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="lang-switch reveal">
+    <div class="lang-switch">
         <button class="lang-btn active" id="btn-ru" onclick="setLang('ru')">ru</button>
         <button class="lang-btn" id="btn-en" onclick="setLang('en')">en</button>
     </div>
 
-    <div class="logo-wrap reveal">
-        <img src="https://i.ibb.co/vzS8m4X/24622.jpg" alt="yui" class="clan-logo">
+    <div class="logo-wrap">
+        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqGhf/aAAwDAQACEQMRAD8A9/ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==" alt="yui_logo" class="clan-logo">
     </div>
 
-    <header class="terminal-header reveal">
+    <header class="terminal-header">
         <div class="term-title" id="t-head">blood ravens</div>
         <div class="term-sub" id="t-sub">established 2026 // active protection :3</div>
     </header>
 
-    <div class="info-block reveal" id="t-desc">
+    <div class="info-block" id="t-desc">
         мы используем <b>osint</b> и цифровые инструменты для обеспечения безопасности. наша цель — защита мирных пользователей и пресечение деструктивной деятельности в сети.
     </div>
 
-    <span class="section-label reveal">[ system_users ]</span>
+    <span class="section-label">[ system_users ]</span>
 
-    <div id="team-grid">
-        </div>
+    <div id="team-grid"></div>
 
     <div class="footer">
         made by @recidivismnational // sys_id_026
@@ -139,7 +131,6 @@
 </div>
 
 <script>
-    // Обновленный список: 11 человек, добавлен @ImPlanov
     const team = [
         { n: "@xuvof", r: "осинт/эдитор", e: "osint/editor" },
         { n: "@fallen_fly", r: "осинт", e: "osint" },
@@ -150,7 +141,7 @@
         { n: "@Bladiclavaa", r: "тролль", e: "troll" },
         { n: "@wortix69", r: "осинт/тролль", e: "osint/troll" },
         { n: "@aominx", r: "осинт", e: "osint" },
-        { n: "@ImPlanov", r: "доксер", e: "doxxer" }, // НОВЫЙ
+        { n: "@ImPlanov", r: "доксер", e: "doxxer" },
         { n: "@martxxxxxxxxx", r: "осинт", e: "osint" }
     ];
 
@@ -178,7 +169,6 @@
     }
 
     setLang('ru');
-    ScrollReveal().reveal('.reveal', { delay: 100, distance: '10px', origin: 'bottom', interval: 50 });
 </script>
 
 </body>
