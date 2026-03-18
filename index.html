@@ -13,9 +13,35 @@
             --glass-deep: rgba(12, 7, 18, 0.9);
             --accent: #ff007f;
             --accent-glow: rgba(255, 0, 127, 0.6);
+            --accent-rgb: 255, 0, 127;
             --text: #ffffff;
             --border: rgba(255, 0, 127, 0.3);
         }
+
+        /* ===== ТЕМЫ ===== */
+        body.theme-blue {
+            --accent: #00aaff;
+            --accent-glow: rgba(0, 170, 255, 0.6);
+            --accent-rgb: 0, 170, 255;
+            --glass: rgba(0, 170, 255, 0.04);
+            --border: rgba(0, 170, 255, 0.3);
+        }
+        body.theme-green {
+            --accent: #00ff88;
+            --accent-glow: rgba(0, 255, 136, 0.6);
+            --accent-rgb: 0, 255, 136;
+            --glass: rgba(0, 255, 136, 0.04);
+            --border: rgba(0, 255, 136, 0.3);
+        }
+        body.theme-pink {
+            --accent: #ff007f;
+            --accent-glow: rgba(255, 0, 127, 0.6);
+            --accent-rgb: 255, 0, 127;
+            --glass: rgba(255, 0, 127, 0.04);
+            --border: rgba(255, 0, 127, 0.3);
+        }
+
+        * { transition: color 0.4s, border-color 0.4s, box-shadow 0.4s, background-color 0.4s; }
 
         body {
             background-color: var(--bg);
@@ -27,8 +53,58 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            -webkit-tap-highlight-color: transparent; /* Убираем синий квадрат при клике на мобилках */
+            -webkit-tap-highlight-color: transparent;
         }
+
+        /* ===== SCANLINES ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.07) 2px,
+                rgba(0,0,0,0.07) 4px
+            );
+            pointer-events: none;
+            z-index: 9999;
+            animation: scanMove 8s linear infinite;
+        }
+        @keyframes scanMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100px; }
+        }
+
+        /* ===== THEME SWITCHER ===== */
+        .theme-bar {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 7px 10px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .theme-dot {
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .theme-dot:active { transform: scale(0.8); }
+        .theme-dot.active { border-color: white; transform: scale(1.2); }
+        .dot-pink  { background: #ff007f; }
+        .dot-blue  { background: #00aaff; }
+        .dot-green { background: #00ff88; }
 
         #particleCanvas {
             position: fixed;
@@ -38,18 +114,17 @@
             pointer-events: none;
         }
 
-        .container { 
-            width: 92%; 
-            max-width: 500px; /* Сузили для идеального вида на телефоне */
-            padding: 40px 0; 
-            position: relative; 
-            z-index: 1; 
+        .container {
+            width: 92%;
+            max-width: 500px;
+            padding: 40px 0;
+            position: relative;
+            z-index: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* ASCII LOGO - MOBILE AUTO-SCALE */
         .ascii-wrap {
             width: 100%;
             display: flex;
@@ -58,7 +133,7 @@
         }
         .ascii-logo {
             color: var(--accent);
-            font-size: 1.8vw; /* Динамический размер букв */
+            font-size: 1.8vw;
             line-height: 1;
             white-space: pre;
             text-align: center;
@@ -79,15 +154,60 @@
             border-radius: 4px;
         }
 
-        .title { 
+        /* ===== GLITCH ===== */
+        .title {
             font-family: 'Orbitron', sans-serif;
-            color: var(--accent); 
-            font-size: 24px; 
-            letter-spacing: 6px; 
+            color: var(--accent);
+            font-size: 24px;
+            letter-spacing: 6px;
             text-shadow: 0 0 15px var(--accent-glow);
+            position: relative;
+            display: inline-block;
+        }
+        .title::before,
+        .title::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+        .title::before {
+            color: #00ffff;
+            animation: glitch1 4s infinite;
+            clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+            opacity: 0;
+        }
+        .title::after {
+            color: #ff00ff;
+            animation: glitch2 4s infinite;
+            clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+            opacity: 0;
+        }
+        @keyframes glitch1 {
+            0%,89%,100% { opacity: 0; transform: translate(0); }
+            90% { opacity: 0.8; transform: translate(-3px, 1px); }
+            92% { opacity: 0.8; transform: translate(3px, -1px); }
+            94% { opacity: 0; }
+        }
+        @keyframes glitch2 {
+            0%,91%,100% { opacity: 0; transform: translate(0); }
+            92% { opacity: 0.7; transform: translate(3px, 2px); }
+            94% { opacity: 0.7; transform: translate(-3px, -2px); }
+            96% { opacity: 0; }
         }
 
-        /* ИНФО-БЛОК С ЭФФЕКТОМ СКЛАНЕРОВАНИЯ */
+        /* ===== МИГАЮЩИЙ КУРСОР ===== */
+        .cursor-blink {
+            display: inline-block;
+            color: var(--accent);
+            animation: blink 1s step-end infinite;
+            font-family: 'Fira Code';
+        }
+        @keyframes blink {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
         .cyber-info {
             background: var(--glass-deep);
             backdrop-filter: blur(15px);
@@ -99,11 +219,13 @@
             font-size: 14px;
             line-height: 1.6;
             color: #ccc;
+            min-height: 52px;
         }
+        #typewriter-text b { color: var(--accent); font-weight: 600; }
 
         #team-grid {
             display: grid;
-            grid-template-columns: 1fr; /* На телефоне лучше в одну колонку */
+            grid-template-columns: 1fr;
             gap: 15px;
             width: 100%;
         }
@@ -121,15 +243,12 @@
             justify-content: space-between;
             align-items: center;
         }
-
-        /* ЭФФЕКТ ПРИ НАЖАТИИ (ТАКТИЛЬНЫЙ) */
         .user-card:active {
             transform: scale(0.94);
-            background: rgba(255, 0, 127, 0.2);
+            background: rgba(var(--accent-rgb), 0.15);
             border-color: #fff;
             box-shadow: 0 0 40px var(--accent);
         }
-
         .user-card::after {
             content: 'view profile >';
             font-size: 9px;
@@ -141,9 +260,30 @@
         .nick { font-family: 'Fira Code'; font-weight: 600; font-size: 17px; color: #fff; }
         .role { color: var(--accent); font-size: 10px; margin-top: 4px; letter-spacing: 2px; text-transform: uppercase; }
 
+        /* ===== ПСЕВДО-ЛОГ ===== */
+        .log-block {
+            width: 100%;
+            margin-top: 30px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(var(--accent-rgb), 0.15);
+            padding: 14px 16px;
+            box-sizing: border-box;
+            font-family: 'Fira Code';
+            font-size: 11px;
+            color: rgba(var(--accent-rgb), 0.6);
+            min-height: 90px;
+        }
+        .log-line {
+            margin: 3px 0;
+            animation: fadeInLog 0.4s ease;
+        }
+        @keyframes fadeInLog {
+            from { opacity: 0; transform: translateX(-6px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
         .footer { padding: 60px 0 30px; font-size: 9px; color: #222; letter-spacing: 4px; font-family: 'Fira Code'; }
 
-        /* АНИМАЦИЯ ДЛЯ ПАРТИКЛОВ :3 */
         @keyframes float {
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }
             50% { opacity: 0.3; }
@@ -151,7 +291,14 @@
         }
     </style>
 </head>
-<body>
+<body class="theme-pink">
+
+<!-- THEME SWITCHER -->
+<div class="theme-bar">
+    <div class="theme-dot dot-pink  active" onclick="setTheme('pink',  this)"></div>
+    <div class="theme-dot dot-blue"         onclick="setTheme('blue',  this)"></div>
+    <div class="theme-dot dot-green"        onclick="setTheme('green', this)"></div>
+</div>
 
 <canvas id="particleCanvas"></canvas>
 
@@ -187,17 +334,20 @@
     </div>
 
     <div class="cyber-header reveal">
-        <div class="title">blood ravens</div>
-        <div style="font-size: 9px; color: var(--accent); margin-top: 5px; font-family: 'Fira Code'; opacity: 0.7;">
-            [ core_access_v2.0 ]
+        <div class="title" data-text="blood ravens">blood ravens</div>
+        <div style="font-size: 9px; color: var(--accent); margin-top: 8px; font-family: 'Fira Code'; opacity: 0.7;">
+            [ core_access_v2.0 ]<span class="cursor-blink">█</span>
         </div>
     </div>
 
     <div class="cyber-info reveal">
-        мы используем <b>osint</b> и цифровые инструменты для обеспечения безопасности. наша цель — защита мирных пользователей.
+        <span id="typewriter-text"></span><span class="cursor-blink" id="tw-cursor">█</span>
     </div>
 
     <div id="team-grid"></div>
+
+    <!-- ПСЕВДО-ЛОГ -->
+    <div class="log-block" id="log-block"></div>
 
     <div class="footer">
         made by @recidivismnational // mobile_optimized
@@ -205,18 +355,28 @@
 </div>
 
 <script>
+    /* ===== THEME SWITCHER ===== */
+    function setTheme(name, el) {
+        document.body.className = 'theme-' + name;
+        document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
+        el.classList.add('active');
+        // Перекрасить партиклы
+        initParticles();
+    }
+
+    /* ===== КОМАНДА ===== */
     const team = [
-        { n: "@xuvof", r: "осинт / эдитор" },
-        { n: "@fallen_fly", r: "осинт" },
+        { n: "@xuvof",              r: "осинт / эдитор" },
+        { n: "@fallen_fly",         r: "осинт" },
         { n: "@recidivismnational", r: "кодер / дизайнер" },
-        { n: "@fucksomer", r: "осинт" },
-        { n: "@UnTaLeNteD0", r: "тролль" },
-        { n: "@loreitov", r: "осинт" },
-        { n: "@Bladiclavaa", r: "тролль" },
-        { n: "@wortix69", r: "осинт / тролль" },
-        { n: "@aominx", r: "осинт" },
-        { n: "@ImPlanov", r: "доксер" },
-        { n: "@martxxxxxxxxx", r: "осинт" }
+        { n: "@fucksomer",          r: "осинт" },
+        { n: "@UnTaLeNteD0",        r: "тролль" },
+        { n: "@loreitov",           r: "осинт" },
+        { n: "@Bladiclavaa",        r: "тролль" },
+        { n: "@wortix69",           r: "осинт / тролль" },
+        { n: "@aominx",             r: "осинт" },
+        { n: "@ImPlanov",           r: "доксер" },
+        { n: "@martxxxxxxxxx",      r: "осинт" }
     ];
 
     const grid = document.getElementById('team-grid');
@@ -230,22 +390,113 @@
     `).join('');
 
     function handleMobileClick(card, user) {
-        // Имитация тактильного отклика перед переходом
+        playBeep();
         setTimeout(() => {
             window.open(`https://t.me/${user}`, '_blank');
         }, 300);
     }
 
-    // ПАРТИКЛЫ :3 ДЛЯ ТЕЛЕФОНОВ
+    /* ===== ЗВУК КЛИКА ===== */
+    function playBeep() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.08, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.15);
+        } catch(e) {}
+    }
+
+    /* ===== ПЕЧАТАЮЩИЙСЯ ТЕКСТ ===== */
+    const infoHTML = 'мы используем <b>osint</b> и цифровые инструменты для обеспечения безопасности. наша цель — защита мирных пользователей.';
+
+    function typewriter(el, html, speed = 28) {
+        // Парсим html в токены (теги и символы)
+        const tokens = [];
+        let i = 0;
+        while (i < html.length) {
+            if (html[i] === '<') {
+                const end = html.indexOf('>', i);
+                tokens.push({ type: 'tag', val: html.slice(i, end + 1) });
+                i = end + 1;
+            } else {
+                tokens.push({ type: 'char', val: html[i] });
+                i++;
+            }
+        }
+        let idx = 0;
+        let built = '';
+        const cursor = document.getElementById('tw-cursor');
+        function next() {
+            if (idx >= tokens.length) { cursor.style.display = 'none'; return; }
+            const t = tokens[idx++];
+            built += t.val;
+            el.innerHTML = built;
+            setTimeout(next, t.type === 'tag' ? 0 : speed);
+        }
+        setTimeout(next, 800);
+    }
+    typewriter(document.getElementById('typewriter-text'), infoHTML);
+
+    /* ===== ПСЕВДО-ЛОГ ===== */
+    const logMessages = [
+        '> initializing secure tunnel...',
+        '> scanning network nodes... done',
+        '> tor relay connected [exit: nl-ams-01]',
+        '> osint module loaded v3.1.2',
+        '> 11 operators detected',
+        '> packet loss: 0.0%',
+        '> encryption: aes-256-gcm active',
+        '> dns leak test: passed',
+        '> vpn handshake: ok',
+        '> opsec score: ████████░░ 82%',
+        '> idle... waiting for tasks',
+        '> threat level: low',
+        '> new connection from unknown node',
+        '> running traceroute...',
+        '> geolocation masked: success',
+    ];
+
+    const logEl = document.getElementById('log-block');
+    let logLines = [];
+
+    function addLog() {
+        const msg = logMessages[Math.floor(Math.random() * logMessages.length)];
+        const line = document.createElement('div');
+        line.className = 'log-line';
+        line.textContent = msg;
+        logEl.appendChild(line);
+        logLines.push(line);
+        if (logLines.length > 5) {
+            logLines[0].remove();
+            logLines.shift();
+        }
+        const next = 1800 + Math.random() * 2500;
+        setTimeout(addLog, next);
+    }
+    setTimeout(addLog, 1200);
+
+    /* ===== ПАРТИКЛЫ ===== */
     const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
+    const pctx = canvas.getContext('2d');
     let particles = [];
+
+    function getAccentColor() {
+        return getComputedStyle(document.body).getPropertyValue('--accent').trim();
+    }
 
     function initParticles() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         particles = [];
-        for(let i=0; i<15; i++) {
+        for (let i = 0; i < 15; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height + canvas.height,
@@ -257,26 +508,30 @@
     }
 
     function drawParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = 'bold 20px monospace';
+        pctx.clearRect(0, 0, canvas.width, canvas.height);
+        pctx.font = 'bold 20px monospace';
+        const color = getAccentColor();
         particles.forEach(p => {
-            ctx.fillStyle = `rgba(255, 0, 127, ${p.opacity})`;
+            pctx.fillStyle = color;
+            pctx.globalAlpha = p.opacity;
             p.y -= p.v;
-            if(p.y < -30) {
+            if (p.y < -30) {
                 p.y = canvas.height + 30;
                 p.x = Math.random() * canvas.width;
             }
-            ctx.fillText(':3', p.x, p.y);
+            pctx.fillText(':3', p.x, p.y);
         });
+        pctx.globalAlpha = 1;
         requestAnimationFrame(drawParticles);
     }
 
     window.addEventListener('resize', initParticles);
-    initParticles(); drawParticles();
-    
-    // Плавное появление при скролле
-    ScrollReveal().reveal('.reveal', { delay: 100, distance: '20px', origin: 'bottom', duration: 1000 });
-    ScrollReveal().reveal('.reveal-card', { delay: 50, distance: '15px', origin: 'right', interval: 80, duration: 800 });
+    initParticles();
+    drawParticles();
+
+    /* ===== SCROLL REVEAL ===== */
+    ScrollReveal().reveal('.reveal',      { delay: 100, distance: '20px', origin: 'bottom', duration: 1000 });
+    ScrollReveal().reveal('.reveal-card', { delay: 50,  distance: '15px', origin: 'right',  interval: 80,  duration: 800 });
 </script>
 
 </body>
