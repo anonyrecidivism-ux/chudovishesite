@@ -396,21 +396,51 @@
         }, 300);
     }
 
-    /* ===== ЗВУК КЛИКА ===== */
+    /* ===== ЗВУК КЛИКА (МЯГКИЙ КЛАВИШ) ===== */
     function playBeep() {
         try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(880, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.08, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.15);
+            const actx = new (window.AudioContext || window.webkitAudioContext)();
+            const t = actx.currentTime;
+
+            // шум — только верхний слой (щелчок пластика)
+            const buf = actx.createBuffer(1, actx.sampleRate * 0.04, actx.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < data.length; i++) {
+                data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 12);
+            }
+            const noise = actx.createBufferSource();
+            noise.buffer = buf;
+
+            // высокочастотный фильтр — убираем весь бас
+            const hiFilter = actx.createBiquadFilter();
+            hiFilter.type = 'highpass';
+            hiFilter.frequency.setValueAtTime(1800, t);
+
+            const noiseGain = actx.createGain();
+            noiseGain.gain.setValueAtTime(0.18, t);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+
+            noise.connect(hiFilter);
+            hiFilter.connect(noiseGain);
+            noiseGain.connect(actx.destination);
+            noise.start(t);
+            noise.stop(t + 0.04);
+
+            // лёгкий тон — средний диапазон, очень коротко
+            const osc = actx.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(900, t);
+            osc.frequency.exponentialRampToValueAtTime(600, t + 0.03);
+
+            const oscGain = actx.createGain();
+            oscGain.gain.setValueAtTime(0.06, t);
+            oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+
+            osc.connect(oscGain);
+            oscGain.connect(actx.destination);
+            osc.start(t);
+            osc.stop(t + 0.03);
+
         } catch(e) {}
     }
 
@@ -513,26 +543,3 @@
         const color = getAccentColor();
         particles.forEach(p => {
             pctx.fillStyle = color;
-            pctx.globalAlpha = p.opacity;
-            p.y -= p.v;
-            if (p.y < -30) {
-                p.y = canvas.height + 30;
-                p.x = Math.random() * canvas.width;
-            }
-            pctx.fillText(':3', p.x, p.y);
-        });
-        pctx.globalAlpha = 1;
-        requestAnimationFrame(drawParticles);
-    }
-
-    window.addEventListener('resize', initParticles);
-    initParticles();
-    drawParticles();
-
-    /* ===== SCROLL REVEAL ===== */
-    ScrollReveal().reveal('.reveal',      { delay: 100, distance: '20px', origin: 'bottom', duration: 1000 });
-    ScrollReveal().reveal('.reveal-card', { delay: 50,  distance: '15px', origin: 'right',  interval: 80,  duration: 800 });
-</script>
-
-</body>
-</html>
