@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>blood ravens // terminal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&family=Inter:wght@100;200;300;400;600&display=swap" rel="stylesheet">
+    <title>blood ravens // mobile_core</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Orbitron:wght@700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/scrollreveal"></script>
     <style>
         :root {
-            --bg: #030305;
-            --term-bg: rgba(20, 10, 25, 0.75);
+            --bg: #020204;
+            --glass: rgba(255, 0, 127, 0.04);
+            --glass-deep: rgba(12, 7, 18, 0.9);
             --accent: #ff007f;
             --accent-glow: rgba(255, 0, 127, 0.6);
-            --text-main: #e0e0e0;
-            --text-dim: #444;
-            --border: rgba(255, 0, 127, 0.25);
-            --font-mono: 'Fira Code', monospace;
+            --text: #ffffff;
+            --border: rgba(255, 0, 127, 0.3);
         }
 
         body {
             background-color: var(--bg);
-            color: var(--text-main);
+            color: var(--text);
             font-family: 'Inter', sans-serif;
             margin: 0; padding: 0;
             overflow-x: hidden;
@@ -28,9 +27,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            -webkit-tap-highlight-color: transparent; /* Убираем синий квадрат при клике на мобилках */
         }
 
-        /* ПАРТИКЛЫ :3 */
         #particleCanvas {
             position: fixed;
             top: 0; left: 0;
@@ -40,8 +39,8 @@
         }
 
         .container { 
-            width: 90%; 
-            max-width: 800px; 
+            width: 92%; 
+            max-width: 500px; /* Сузили для идеального вида на телефоне */
             padding: 40px 0; 
             position: relative; 
             z-index: 1; 
@@ -50,100 +49,105 @@
             align-items: center;
         }
 
-        .lang-switch { display: flex; gap: 10px; justify-content: flex-end; width: 100%; margin-bottom: 20px; }
-        .lang-btn { background: rgba(255,255,255,0.02); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 6px 12px; font-family: var(--font-mono); font-size: 11px; border-radius: 8px; }
-        .lang-btn.active { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
-
+        /* ASCII LOGO - MOBILE AUTO-SCALE */
         .ascii-wrap {
             width: 100%;
             display: flex;
             justify-content: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         .ascii-logo {
             color: var(--accent);
-            font-size: 3px;
-            line-height: 3px;
+            font-size: 1.8vw; /* Динамический размер букв */
+            line-height: 1;
             white-space: pre;
             text-align: center;
-            filter: drop-shadow(0 0 8px var(--accent-glow));
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+            pointer-events: none;
         }
 
-        .terminal-header {
-            background: var(--term-bg);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 30px;
-            margin-bottom: 40px;
-            text-align: center;
-            width: 100%;
-            backdrop-filter: blur(25px);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-        }
-        .term-title { color: var(--accent); font-size: 28px; letter-spacing: 6px; font-family: var(--font-mono); font-weight: 600; text-shadow: 0 0 15px var(--accent-glow); }
-        .term-sub { font-size: 10px; color: var(--text-dim); margin-top: 10px; letter-spacing: 3px; font-family: var(--font-mono); }
-
-        .info-block {
-            margin-bottom: 50px;
-            padding: 30px;
-            background: var(--term-bg);
-            border: 1px solid var(--border);
-            border-radius: 24px;
+        .cyber-header {
+            background: var(--glass-deep);
             backdrop-filter: blur(20px);
-            font-size: 15px;
-            line-height: 1.8;
+            border: 1px solid var(--border);
+            padding: 25px;
             width: 100%;
-            box-sizing: border-box;
             text-align: center;
+            margin-bottom: 25px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border-radius: 4px;
+        }
+
+        .title { 
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent); 
+            font-size: 24px; 
+            letter-spacing: 6px; 
+            text-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* ИНФО-БЛОК С ЭФФЕКТОМ СКЛАНЕРОВАНИЯ */
+        .cyber-info {
+            background: var(--glass-deep);
+            backdrop-filter: blur(15px);
+            border-left: 3px solid var(--accent);
+            padding: 20px;
+            width: 100%;
+            margin-bottom: 35px;
+            box-sizing: border-box;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ccc;
         }
 
         #team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
+            grid-template-columns: 1fr; /* На телефоне лучше в одну колонку */
+            gap: 15px;
             width: 100%;
-            perspective: 1200px;
         }
-        
-        .card {
-            background: var(--term-bg);
+
+        .user-card {
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border);
-            padding: 25px;
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            transition: transform 0.1s ease-out, box-shadow 0.3s ease, background 0.3s ease;
-            text-align: center;
+            padding: 22px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
-            transform-style: preserve-3d;
+            text-align: left;
             position: relative;
-        }
-        .card:hover { 
-            border-color: var(--accent); 
-            box-shadow: 0 15px 45px rgba(255, 0, 127, 0.3); 
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* Вдавливание при клике */
-        .card.active-click {
-            transform: scale(0.92) translateZ(-30px) !important;
-            background: rgba(255, 0, 127, 0.3);
-            box-shadow: 0 0 50px var(--accent);
+        /* ЭФФЕКТ ПРИ НАЖАТИИ (ТАКТИЛЬНЫЙ) */
+        .user-card:active {
+            transform: scale(0.94);
+            background: rgba(255, 0, 127, 0.2);
             border-color: #fff;
-        }
-        
-        .nick { font-weight: 600; color: #fff; font-size: 18px; font-family: var(--font-mono); pointer-events: none; }
-        .role { color: var(--accent); font-size: 12px; margin-top: 8px; font-family: var(--font-mono); opacity: 0.9; pointer-events: none; }
-
-        .footer {
-            text-align: center;
-            padding: 80px 0 30px 0;
-            font-size: 10px;
-            color: #1a1a1a;
-            letter-spacing: 6px;
+            box-shadow: 0 0 40px var(--accent);
         }
 
-        @media (max-width: 600px) {
-            .ascii-logo { font-size: 2px; line-height: 2px; }
-            .container { width: 95%; }
+        .user-card::after {
+            content: 'view profile >';
+            font-size: 9px;
+            color: var(--accent);
+            font-family: 'Fira Code';
+            opacity: 0.5;
+        }
+
+        .nick { font-family: 'Fira Code'; font-weight: 600; font-size: 17px; color: #fff; }
+        .role { color: var(--accent); font-size: 10px; margin-top: 4px; letter-spacing: 2px; text-transform: uppercase; }
+
+        .footer { padding: 60px 0 30px; font-size: 9px; color: #222; letter-spacing: 4px; font-family: 'Fira Code'; }
+
+        /* АНИМАЦИЯ ДЛЯ ПАРТИКЛОВ :3 */
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
@@ -152,12 +156,7 @@
 <canvas id="particleCanvas"></canvas>
 
 <div class="container">
-    <div class="lang-switch reveal">
-        <button class="lang-btn active" id="btn-ru" onclick="setLang('ru')">ru</button>
-        <button class="lang-btn" id="btn-en" onclick="setLang('en')">en</button>
-    </div>
-
-    <div class="ascii-wrap reveal">
+    <div class="ascii-wrap">
         <pre class="ascii-logo">
 ....:::-=-::::-----------------------------==---=-=.....-=----------------------------------===-====
 ....:::-=-::::----------------------------...............:-...-=-----------------------------=-=====
@@ -183,106 +182,61 @@
 ......::-::--------:::::----+***###**#=...-+=-..........:-+*:.:+#********+-=------------------------
 .......:-::::::::::::::=-:-=****#%***##:.................::...-##**#%****=--------------------------
 .......:-::::::::::::::-::-*+***##****#+....::.....:..........+#***##***#=--------------------------
-....:..:-:::::::::::::=::-*-:***#%****##:....................-#****%#****=--------------------------
- ......:-::::::::::::-::-=:::=**#%#****##-:........::.......:##***#%#***==--------------------------
-.......:-::::::::::::-:::::::-**#%#*****#%#+:.............:*%#***#%%***+----------------------------
-......::-::::::::::.-:::::::::-**+*******#%%##*=:.....:=*###*****%%#***-----------------------------
-......::-:::::::::::-::::::::::-*=-*##****#%*-+----==-----##***#%%+=**------------------------------
-.......:-::::::::-==::::::--..:----+%%#*****---=------=----***###=-==--:..--------------------------
-....:.::-::::::::+#=::::::=-:....:=#**-=#**+-----==-=-----=*++--:-:--.....:-------------------------
-....:.::-:::::::-*%#*+++::=--.....:#*=--:.:-------=#*-----+----:--:........-------------------------
-....::::-::::::-+*::+##-::--=...::.-....+....:----#%%+-----:..+...:......:=-------------------------
-....:.::-:::::::=-::-*#-::--=#:...--....##-.....=%%%%%+:....=#+....:.:...=*-------------------------
-....::::-::::::-=:::-==:::-=##+....:....####+-=########-.:*###=....-.....-##------------------------
-....::::-::::::=-:::--=:::-###+.....:...*#####################:....-.....-##*-----------------------
-....::::-::::::=::::--=:::+###*-:.......=#####################....:::=...*###-----------------------
-::::::::-:::::=-::::--=:::+#####...:.:...####################=....:-...:####*-----------------------
-...::.::-::::--:::::-:=:::+####%:...::...+###################:....-....:#%%#+-----------------------
-:::::-::-::::=::::::-:=:::=####%:....:.-.-#####%%%%##%%######..:.-.....=%%##------------------------
--------=-:::--::::::-:=:::=####%%*=..:.:..#######%%%########:.:..:=-=*######+-----------------------
+....:..:-:::::::::::::=::-*-:***#%****##:.................::..-#****%#****=--------------------------
         </pre>
     </div>
 
-    <header class="terminal-header reveal">
-        <div class="term-title" id="t-head">blood ravens</div>
-        <div class="term-sub" id="t-sub">established 2026 // active protection :3</div>
-    </header>
-
-    <div class="info-block reveal" id="t-desc">
-        мы используем <b>osint</b> и цифровые инструменты для обеспечения безопасности. наша цель — защита мирных пользователей и пресечение деструктивной деятельности в сети.
+    <div class="cyber-header reveal">
+        <div class="title">blood ravens</div>
+        <div style="font-size: 9px; color: var(--accent); margin-top: 5px; font-family: 'Fira Code'; opacity: 0.7;">
+            [ core_access_v2.0 ]
+        </div>
     </div>
 
-    <span class="section-label reveal">[ system_users ]</span>
+    <div class="cyber-info reveal">
+        мы используем <b>osint</b> и цифровые инструменты для обеспечения безопасности. наша цель — защита мирных пользователей.
+    </div>
 
     <div id="team-grid"></div>
 
     <div class="footer">
-        made by @recidivismnational // sys_id_026
+        made by @recidivismnational // mobile_optimized
     </div>
 </div>
 
 <script>
     const team = [
-        { n: "@xuvof", r: "осинт/эдитор", e: "osint/editor" },
-        { n: "@fallen_fly", r: "осинт", e: "osint" },
-        { n: "@recidivismnational", r: "кодер/дизайнер", e: "coder/designer" },
-        { n: "@fucksomer", r: "осинт", e: "osint" },
-        { n: "@UnTaLeNteD0", r: "тролль", e: "troll" },
-        { n: "@loreitov", r: "осинт", e: "osint" },
-        { n: "@Bladiclavaa", r: "тролль", e: "troll" },
-        { n: "@wortix69", r: "осинт/тролль", e: "osint/troll" },
-        { n: "@aominx", r: "осинт", e: "osint" },
-        { n: "@ImPlanov", r: "доксер", e: "doxxer" },
-        { n: "@martxxxxxxxxx", r: "осинт", e: "osint" }
+        { n: "@xuvof", r: "осинт / эдитор" },
+        { n: "@fallen_fly", r: "осинт" },
+        { n: "@recidivismnational", r: "кодер / дизайнер" },
+        { n: "@fucksomer", r: "осинт" },
+        { n: "@UnTaLeNteD0", r: "тролль" },
+        { n: "@loreitov", r: "осинт" },
+        { n: "@Bladiclavaa", r: "тролль" },
+        { n: "@wortix69", r: "осинт / тролль" },
+        { n: "@aominx", r: "осинт" },
+        { n: "@ImPlanov", r: "доксер" },
+        { n: "@martxxxxxxxxx", r: "осинт" }
     ];
 
-    const langData = {
-        ru: { head: "blood ravens", sub: "основано 2026 // активная защита :3", desc: "мы используем <b>osint</b> и цифровые инструменты для обеспечения безопасности. наша цель — защита мирных пользователей и пресечение деструктивной деятельности в сети." },
-        en: { head: "blood ravens", sub: "est. 2026 // active defense :3", desc: "we utilize <b>osint</b> and digital tools to maintain security. our mission is to protect peaceful users and neutralize destructive online activity." }
-    };
-
-    function setLang(lang) {
-        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-        if(lang === 'ru') document.getElementById('btn-ru').classList.add('active');
-        else document.getElementById('btn-en').classList.add('active');
-        
-        document.getElementById('t-head').innerText = langData[lang].head;
-        document.getElementById('t-sub').innerText = langData[lang].sub;
-        document.getElementById('t-desc').innerHTML = langData[lang].desc;
-
-        const grid = document.getElementById('team-grid');
-        grid.innerHTML = team.map(m => `
-            <div class="card reveal-card" data-tg="${m.n.replace('@', '')}">
+    const grid = document.getElementById('team-grid');
+    grid.innerHTML = team.map(m => `
+        <div class="user-card reveal-card" onclick="handleMobileClick(this, '${m.n.replace('@', '')}')">
+            <div>
                 <div class="nick">${m.n}</div>
-                <div class="role">${lang === 'ru' ? m.r : m.e}</div>
+                <div class="role">${m.r}</div>
             </div>
-        `).join('');
+        </div>
+    `).join('');
 
-        ScrollReveal().reveal('.reveal-card', { delay: 50, distance: '15px', origin: 'bottom', interval: 40, duration: 600 });
-        initTiltAndClick();
+    function handleMobileClick(card, user) {
+        // Имитация тактильного отклика перед переходом
+        setTimeout(() => {
+            window.open(`https://t.me/${user}`, '_blank');
+        }, 300);
     }
 
-    function initTiltAndClick() {
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width - 0.5;
-                const y = (e.clientY - rect.top) / rect.height - 0.5;
-                card.style.transform = `rotateX(${y * -15}deg) rotateY(${x * 15}deg) translateY(-5px)`;
-            });
-            card.addEventListener('mouseleave', () => { card.style.transform = `rotateX(0deg) rotateY(0deg) translateY(0)`; });
-            card.addEventListener('click', () => {
-                card.classList.add('active-click');
-                const tgUser = card.getAttribute('data-tg');
-                setTimeout(() => {
-                    window.open(`https://t.me/${tgUser}`, '_blank');
-                    card.classList.remove('active-click');
-                }, 1000);
-            });
-        });
-    }
-
-    // ПАРТИКЛЫ :3 ENGINE
+    // ПАРТИКЛЫ :3 ДЛЯ ТЕЛЕФОНОВ
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -294,20 +248,24 @@
         for(let i=0; i<15; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                v: 0.2 + Math.random() * 0.4,
-                size: 14 + Math.random() * 6
+                y: Math.random() * canvas.height + canvas.height,
+                v: 1 + Math.random() * 2,
+                size: 14 + Math.random() * 10,
+                opacity: Math.random() * 0.5
             });
         }
     }
 
     function drawParticles() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'rgba(255, 0, 127, 0.15)';
-        ctx.font = '16px monospace';
+        ctx.font = 'bold 20px monospace';
         particles.forEach(p => {
+            ctx.fillStyle = `rgba(255, 0, 127, ${p.opacity})`;
             p.y -= p.v;
-            if(p.y < -20) p.y = canvas.height + 20;
+            if(p.y < -30) {
+                p.y = canvas.height + 30;
+                p.x = Math.random() * canvas.width;
+            }
             ctx.fillText(':3', p.x, p.y);
         });
         requestAnimationFrame(drawParticles);
@@ -315,8 +273,10 @@
 
     window.addEventListener('resize', initParticles);
     initParticles(); drawParticles();
-    setLang('ru');
-    ScrollReveal().reveal('.reveal', { delay: 100, distance: '20px', origin: 'bottom', interval: 60, duration: 800 });
+    
+    // Плавное появление при скролле
+    ScrollReveal().reveal('.reveal', { delay: 100, distance: '20px', origin: 'bottom', duration: 1000 });
+    ScrollReveal().reveal('.reveal-card', { delay: 50, distance: '15px', origin: 'right', interval: 80, duration: 800 });
 </script>
 
 </body>
