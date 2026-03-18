@@ -9,12 +9,12 @@
     <style>
         :root {
             --bg: #030305;
-            --term-bg: rgba(10, 10, 15, 0.5); /* Полупрозрачный для стекла */
-            --accent: #ff007f; /* Ярко-розовый */
-            --accent-glow: rgba(255, 0, 127, 0.4);
+            --term-bg: rgba(15, 10, 20, 0.6);
+            --accent: #ff007f;
+            --accent-glow: rgba(255, 0, 127, 0.5);
             --text-main: #e0e0e0;
             --text-dim: #505050;
-            --border: rgba(255, 0, 127, 0.15); /* Тонкая розовая граница */
+            --border: rgba(255, 0, 127, 0.2);
             --font-mono: 'Fira Code', monospace;
             --font-main: 'Inter', sans-serif;
         }
@@ -26,10 +26,11 @@
             margin: 0; padding: 0;
             overflow-x: hidden;
             text-transform: lowercase;
-            font-weight: 300;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* ГЛУБОКИЕ НЕОНОВЫЕ ПАРТИКЛЫ НА ФОНЕ */
         #particleCanvas {
             position: fixed;
             top: 0; left: 0;
@@ -38,116 +39,132 @@
             pointer-events: none;
         }
 
-        .container { width: 92%; max-width: 900px; margin: 0 auto; padding: 60px 0; position: relative; z-index: 1; }
+        .container { 
+            width: 90%; 
+            max-width: 850px; 
+            padding: 40px 0; 
+            position: relative; 
+            z-index: 1; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-        /* LANG SWITCHER */
-        .lang-switch { display: flex; gap: 15px; justify-content: flex-end; width: 100%; margin-bottom: 30px; }
-        .lang-btn { background: rgba(255,255,255,0.02); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 6px 14px; font-family: var(--font-mono); font-size: 11px; border-radius: 6px; transition: 0.3s; }
-        .lang-btn.active { color: var(--accent); border-color: var(--accent); background: rgba(255, 0, 127, 0.05); box-shadow: 0 0 10px var(--accent-glow); }
+        .lang-switch { display: flex; gap: 10px; justify-content: flex-end; width: 100%; margin-bottom: 30px; }
+        .lang-btn { background: rgba(255,255,255,0.02); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 6px 12px; font-family: var(--font-mono); font-size: 11px; border-radius: 8px; }
+        .lang-btn.active { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
 
-        /* ASCII ЛОГО (Твоя Юи) С ГЛОУ ПРИ НАВЕДЕНИИ */
+        .ascii-wrap {
+            width: 100%;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
         .ascii-logo {
-            color: var(--text-dim);
-            font-size: 4px;
-            line-height: 4px;
-            white-space: pre;
-            margin-bottom: 40px;
-            text-align: center;
-            opacity: 0.5;
-            transition: 0.5s;
-            font-family: var(--font-mono);
-            cursor: pointer;
-        }
-        .ascii-logo:hover {
             color: var(--accent);
-            opacity: 1;
-            filter: drop-shadow(0 0 10px var(--accent-glow));
+            font-size: 3px;
+            line-height: 3px;
+            white-space: pre;
+            text-align: center;
+            filter: drop-shadow(0 0 5px var(--accent-glow));
+            opacity: 0.7;
         }
 
-        /* ХЕДЕР С ЭФФЕКТОМ МЕРЦАНИЯ */
+        .logo-wrap {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        .clan-logo {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            object-fit: cover;
+            animation: breathing 3s ease-in-out infinite;
+        }
+        @keyframes breathing {
+            0%, 100% { box-shadow: 0 0 20px var(--accent-glow); transform: scale(1); }
+            50% { box-shadow: 0 0 45px var(--accent-glow); transform: scale(1.03); }
+        }
+
         .terminal-header {
             background: var(--term-bg);
             border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 50px;
+            padding: 25px;
+            margin-bottom: 40px;
             text-align: center;
             width: 100%;
-            backdrop-filter: blur(20px); /* Матовое стекло */
+            backdrop-filter: blur(20px);
             box-sizing: border-box;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
-        .term-title { 
-            color: var(--accent); 
-            font-size: 30px; 
-            letter-spacing: 7px; 
-            font-weight: 600; 
-            font-family: var(--font-mono);
-            animation: flicker 3s infinite; /* Мерцание */
-        }
-        @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 15px var(--accent-glow); opacity: 1; }
-            20%, 24%, 55% { text-shadow: none; opacity: 0.8; }
-        }
-        .term-sub { font-size: 11px; color: var(--text-dim); margin-top: 8px; letter-spacing: 3px; font-family: var(--font-mono); }
+        .term-title { color: var(--accent); font-size: 26px; letter-spacing: 5px; font-family: var(--font-mono); font-weight: 600; }
+        .term-sub { font-size: 10px; color: var(--text-dim); margin-top: 8px; letter-spacing: 3px; font-family: var(--font-mono); }
 
-        /* МАНИФЕСТ (СТЕКЛО) */
         .info-block {
-            margin-bottom: 60px;
-            padding: 30px;
+            margin-bottom: 50px;
+            padding: 25px;
             background: var(--term-bg);
             border: 1px solid var(--border);
-            border-radius: 18px;
+            border-radius: 20px;
             backdrop-filter: blur(15px);
-            font-size: 15px;
-            line-height: 1.8;
+            font-size: 14px;
+            line-height: 1.7;
             width: 100%;
             box-sizing: border-box;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            font-weight: 200;
+            text-align: center;
         }
-        .info-block b { color: var(--accent); font-weight: 500; }
+        .info-block b { color: var(--accent); }
 
-        .section-label { font-size: 10px; color: var(--text-dim); margin: 40px 0 30px 0; letter-spacing: 6px; text-transform: uppercase; display: block; width: 100%; text-align: left; font-family: var(--font-mono); }
+        .section-label { font-size: 10px; color: var(--text-dim); margin: 30px 0 20px 0; letter-spacing: 5px; text-transform: uppercase; font-family: var(--font-mono); width: 100%; text-align: center; }
 
-        /* СЕТКА УЧАСТНИКОВ */
         #team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 20px;
             width: 100%;
-            perspective: 1000px; /* Для 3D-эффекта при наведении */
+            perspective: 1000px;
         }
+        
+        /* ССЫЛКА ВНУТРИ КАРТОЧКИ */
+        .card-link { text-decoration: none; color: inherit; display: block; }
+        
         .card {
             background: var(--term-bg);
             border: 1px solid var(--border);
-            padding: 22px;
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            transition: transform 0.2s, box-shadow 0.3s, border-color 0.3s;
-            position: relative;
-            transform-style: preserve-3d; /* Для 3D */
+            padding: 25px;
+            border-radius: 18px;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            text-align: center;
             cursor: pointer;
+            transform-style: preserve-3d;
         }
         .card:hover { 
             border-color: var(--accent); 
-            box-shadow: 0 10px 40px rgba(255, 0, 127, 0.15); 
-            background: rgba(255, 0, 127, 0.02);
+            box-shadow: 0 15px 40px rgba(255, 0, 127, 0.3); 
+            background: rgba(255, 0, 127, 0.08);
+            transform: translateY(-5px) scale(1.02);
         }
         
-        .nick { font-weight: 600; color: #fff; font-size: 16px; font-family: var(--font-mono); letter-spacing: 1px; }
-        .role { color: var(--accent); font-size: 11px; margin-top: 6px; opacity: 0.9; letter-spacing: 2px; font-family: var(--font-mono); }
+        .nick { font-weight: 600; color: #fff; font-size: 17px; font-family: var(--font-mono); }
+        .role { color: var(--accent); font-size: 11px; margin-top: 5px; font-family: var(--font-mono); opacity: 0.8; letter-spacing: 1px; }
 
         .footer {
             text-align: center;
-            padding: 100px 0 20px 0;
+            padding: 80px 0 30px 0;
             font-size: 10px;
-            color: #1a1a1a;
+            color: #222;
             letter-spacing: 5px;
-            width: 100%;
-            position: relative;
-            z-index: 1;
             font-family: var(--font-mono);
+        }
+
+        @media (max-width: 600px) {
+            .term-title { font-size: 20px; }
+            .ascii-logo { font-size: 2px; line-height: 2px; }
+            .container { width: 95%; }
         }
     </style>
 </head>
@@ -161,7 +178,8 @@
         <button class="lang-btn" id="btn-en" onclick="setLang('en')">en</button>
     </div>
 
-    <pre class="ascii-logo reveal">
+    <div class="ascii-wrap reveal">
+        <pre class="ascii-logo">
 ....:::-=-::::-----------------------------==---=-=.....-=----------------------------------===-====
 ....:::-=-::::----------------------------...............:-...-=-----------------------------=-=====
 ....::--=-::::------------------------..:-.......::......:......:=----------------------------=--===
@@ -203,12 +221,12 @@
 ...::.::-::::--:::::-:=:::+####%:...::...+###################:....-....:#%%#+-----------------------
 :::::-::-::::=::::::-:=:::=####%:....:.-.-#####%%%%##%%######..:.-.....=%%##------------------------
 -------=-:::--::::::-:=:::=####%%*=..:.:..#######%%%########:.:..:=-=*######+-----------------------
-=++========:+========:+===+##%#%%%%:..:--:---=+*####**++++++---:.=%%%#%######+++++++++++++++++******
-**********==********+:+***#%####%%*--.:.........::-::--:......:..+%%%###############################
-*********+-*********+:+***######%%%%=-........................:---%%################################
-*********=+*********+:+*##%######%%%%+.........................::#%#######%%########################
-*********--*******-*:**::-------*##%#***#++++##%%%#+++*#*+++++++++++*#++*#*#########################
-    </pre>
+        </pre>
+    </div>
+
+    <div class="logo-wrap reveal">
+        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqGhf/aAAwDAQACEQMRAD8A9/ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==" alt="yui" class="clan-logo">
+    </div>
 
     <header class="terminal-header reveal">
         <div class="term-title" id="t-head">blood ravens</div>
@@ -221,8 +239,7 @@
 
     <span class="section-label reveal">[ system_users ]</span>
 
-    <div id="team-grid">
-        </div>
+    <div id="team-grid"></div>
 
     <div class="footer">
         made by @recidivismnational // sys_id_026
@@ -230,7 +247,6 @@
 </div>
 
 <script>
-    // Список участников (11 человек)
     const team = [
         { n: "@xuvof", r: "осинт/эдитор", e: "osint/editor" },
         { n: "@fallen_fly", r: "осинт", e: "osint" },
@@ -261,85 +277,67 @@
 
         const grid = document.getElementById('team-grid');
         grid.innerHTML = team.map(m => `
-            <div class="card reveal-card">
-                <div class="nick">${m.n}</div>
-                <div class="role">${lang === 'ru' ? m.r : m.e}</div>
-            </div>
+            <a href="https://t.me/${m.n.replace('@', '')}" target="_blank" class="card-link reveal-card">
+                <div class="card">
+                    <div class="nick">${m.n}</div>
+                    <div class="role">${lang === 'ru' ? m.r : m.e}</div>
+                </div>
+            </a>
         `).join('');
 
-        // Переинициализация ScrollReveal для новых карт
-        ScrollReveal().reveal('.reveal-card', { delay: 50, distance: '10px', origin: 'bottom', interval: 40, duration: 600, easing: 'cubic-bezier(0.5, 0, 0, 1)' });
-        
-        // Добавление 3D-эффекта к новым картам
+        ScrollReveal().reveal('.reveal-card', { delay: 50, distance: '15px', origin: 'bottom', interval: 40, duration: 600 });
         add3DEffect();
     }
 
-    // НЕОНОВЫЕ СФЕРЫ ENGINE
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
-
     function initParticles() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         particles = [];
-        for(let i=0; i<25; i++) {
+        for(let i=0; i<30; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
-                v: 0.1 + Math.random() * 0.3,
-                size: 2 + Math.random() * 5,
-                glow: 10 + Math.random() * 20
+                v: 0.2 + Math.random() * 0.4,
+                size: 2 + Math.random() * 4
             });
         }
     }
-
     function drawParticles() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255, 0, 127, 0.15)';
         particles.forEach(p => {
             p.y -= p.v;
-            if(p.y < -30) p.y = canvas.height + 30;
-            
-            ctx.fillStyle = 'rgba(255, 0, 127, 0.2)';
-            ctx.shadowColor = 'rgba(255, 0, 127, 0.8)';
-            ctx.shadowBlur = p.glow;
+            if(p.y < -10) p.y = canvas.height + 10;
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
             ctx.fill();
-            ctx.shadowBlur = 0; // Сброс для производительности
         });
         requestAnimationFrame(drawParticles);
     }
 
-    // 3D-ЭФФЕКТ ДЛЯ КАРТОЧЕК
     function add3DEffect() {
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
+        document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = -(y - centerY) / 10;
-                const rotateY = (x - centerX) / 10;
-                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                card.style.transform = `perspective(1000px) rotateX(${y * -15}deg) rotateY(${x * 15}deg) translateY(-5px)`;
             });
             card.addEventListener('mouseleave', () => {
-                card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)`;
             });
         });
     }
 
-    // ИНИЦИАЛИЗАЦИЯ ВСЕГО
     window.addEventListener('resize', initParticles);
-    initParticles(); 
-    drawParticles();
-    setLang('ru'); // Это также инициализирует 3D и ScrollReveal
-
-    // КОНФИГУРАЦИЯ SCROLLREVEAL (АНИМАЦИИ ПОЯВЛЕНИЯ)
-    ScrollReveal().reveal('.reveal', { delay: 100, distance: '20px', origin: 'bottom', interval: 60, duration: 800, easing: 'cubic-bezier(0.5, 0, 0, 1)' });
+    initParticles(); drawParticles();
+    setLang('ru');
+    ScrollReveal().reveal('.reveal', { delay: 100, distance: '20px', origin: 'bottom', interval: 60, duration: 800 });
 </script>
 
 </body>
 </html>
+
