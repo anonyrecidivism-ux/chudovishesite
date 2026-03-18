@@ -21,7 +21,7 @@
             font-family: 'Fira Code', monospace;
             margin: 0; padding: 0;
             overflow-x: hidden;
-            text-transform: lowercase; /* СТРОГО МАЛЕНЬКИЕ БУКВЫ */
+            text-transform: lowercase;
         }
 
         .container { width: 92%; max-width: 800px; margin: 0 auto; padding: 30px 0; display: flex; flex-direction: column; align-items: center; }
@@ -30,13 +30,13 @@
         .lang-btn { background: none; border: 1px solid var(--border); color: var(--dim); cursor: pointer; padding: 4px 10px; font-family: inherit; font-size: 11px; }
         .lang-btn.active { color: var(--accent); border-color: var(--accent); }
 
-        /* НОРМАЛЬНЫЙ ВОРОН ASCII */
+        /* ПЕРЕРИСОВАННЫЙ ВОРОН ASCII - РЕАЛЬНЫЙ СИЛУЭТ */
         .raven-ascii {
             color: var(--accent);
             font-size: 10px;
             line-height: 1;
             white-space: pre;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.2));
             text-align: center;
         }
@@ -84,18 +84,18 @@
         .nick { font-weight: 500; color: #fff; margin-left: 15px; font-size: 14px; }
         .role { color: var(--accent); font-size: 11px; margin-top: 5px; margin-left: 15px; opacity: 0.7; }
 
-        /* ЮИ ИЗ K-ON! */
+        /* ЮИ ИЗ K-ON! - ЗАШИТА В КОД */
         .yui-wrap {
-            margin-top: 50px;
+            margin-top: 60px;
             text-align: center;
         }
         .yui-img {
-            width: 120px;
-            filter: grayscale(0.5) contrast(1.2);
+            width: 100px;
+            filter: grayscale(0.6) contrast(1.1);
             transition: 0.3s;
             cursor: pointer;
         }
-        .yui-img:hover { filter: grayscale(0); transform: rotate(5deg); }
+        .yui-img:hover { filter: grayscale(0); transform: scale(1.05); }
 
         .footer {
             text-align: center;
@@ -143,7 +143,7 @@
     <div id="team-grid"></div>
 
     <div class="yui-wrap">
-        <img src="https://64.media.tumblr.com/tumblr_m43v8zYQY81r60797o1_500.gifv" alt="yui" class="yui-img">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABw4pVEAAAASFBMVEUAAAD///8AAAAzMzM7Ozs5OTkyMjI4ODg3Nzc1NTU6Ojo2NjUvLy8xMTUtLS0sLCwrKysqKiopKSkoKCgmJiYlJSUkJCQlJSVn5pYpAAAAAXRSTlMAQObYZgAAAnpJREFUeNrtl+tygzAMhR3bOOX//7URAs5id9pMphNo59N6Sdr5OJKT6bTf75/VzK6mGfM4ZvFuzDNcZ84yXmfMMl5mKDNmGcoM64mYZSgzrCdilmHM8O39fXvYw5jR/vbwZrzfHt5M69vDm/F+e3gjZmZmxvvs4c14vz3MGb7Nf//vP4Iww0wzzXbS/zDTTHMz04P+Z5pZ9mZmmXszXmeG9bCef8wwE66H+UwzzTDzfpgz4f0YZmZmxvMxfA+G72H4HobvYfgehu/B8D0YvgfD92D4Hgzfg+F7MHwPhu/B8D0YvoeH9vDeHvoeHtqDYU5//f+D78Gctof+z4Tbw37NhNvf7v+YcPuf/48Z033bZ36Y7ltOfpiuPfnv6f6fmf8b0939v5iZmfF6vO4fM839Z5re/2SaGf9hmh5/munu/p9pZrwfZnpb3N+Y6Z8wUzP9U6Zr3B8xvS3vL5leFvd3pneH6ZmYfmeu8mOml/V9xvS2vD9lellcnzO9re8vTf9E5j7NfEfmPnP7NfPr8nrK9Lp4fmfG+zEzf6Bzm5n5zC6/mfnOLv+O/n/I/Kq8vmZ+U16PmHnnXqKZ77iZGe8Pzbyh95fMv6D3GzPvZ/I7MvN2Nr8h8w703mPmXeit5ZfMO9A5md8wMzN+xMwvGL4Hw/dg+B4M34PhK3+z+Q09vKGHN/Tw7vWwR9835O/R9w35e/R9w/xofvN7mN/R72F+R7+H+R09/FwPr8fwWv9ofkN/aH5Df6H5DPW8bT039Xv9Z4/mN7T7vT979D3Mb+h7mF97f/boU//jP05+xG89Nvf3j6/vD//4+H6v977+Y/3X+b3eL+s/7G/X5/9Rff0/5w8AAAD//wOf4jT//v///yH5BAEKAP8ALAAAAABkAGQAAAj/AAMIHEhwoMGDCBMqXMiwocOHECNKnEixosWLGDNq3Mixo8ePIEOKHEmypMmTKFOqXMmypcuXMGPKnEmzps2bOHPq3Mmzp8+fQIMKHUq0qNGjSJMqXcq0qdOnUKNKnUq1qtWrWLNq3cq1q9evYMOKHUu2rNmzaNOqXcu2rdu3cOPKnUu3rt27ePPq3cu3r9+/gAMLHky4sOHDiBMrXsy4sePHkCNLnky5suXLmDNr3sy5s+fPoEOLHky6tOnTqFOrXs26tevXsGPLnk27tu3buHPr3s27t+/fwIMLH068uPHjyJMrX868ufPn0KNLn069uvXr2LNr3869u//u37+DBwEAOw==" alt="Юи из K-On!" class="yui-img">
         <div style="font-size: 10px; color: var(--dim); margin-top: 10px;">yui_hirasawa.exe</div>
     </div>
 
@@ -194,4 +194,5 @@
 
 </body>
 </html>
+
 
