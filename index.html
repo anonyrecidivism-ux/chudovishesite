@@ -10,8 +10,8 @@
         :root {
             --bg: #0a0a0a;
             --term-bg: #121212;
-            --accent: #ff4da6;
-            --accent-glow: rgba(255, 77, 166, 0.4);
+            --accent: #ff007f; /* Ярко-розовый */
+            --accent-glow: rgba(255, 0, 127, 0.4);
             --text: #d0d0d0;
             --dim: #333;
             --border: #222;
@@ -33,6 +33,7 @@
         .lang-btn { background: none; border: 1px solid var(--border); color: var(--dim); cursor: pointer; padding: 5px 12px; font-family: inherit; font-size: 11px; }
         .lang-btn.active { color: var(--accent); border-color: var(--accent); }
 
+        /* ЮИ - ЗАШИТА НАМЕРТВО, СВЕТИТСЯ РОЗОВЫМ */
         .logo-wrap {
             margin-bottom: 45px;
             position: relative;
@@ -43,11 +44,12 @@
         .clan-logo {
             width: 140px;
             height: 140px;
-            border-radius: 50%;
+            border-radius: 50%; /* Сделаем круглой */
             border: 2px solid var(--border);
+            /* Мощное розовое неоновое свечение */
             box-shadow: 0 0 35px var(--accent-glow);
             filter: contrast(1.1) brightness(0.98);
-            object-fit: cover;
+            object-fit: cover; /* Чтобы фотка не сплющилась */
         }
 
         .terminal-header {
@@ -57,7 +59,7 @@
             text-align: center;
             width: 100%;
         }
-        .term-title { color: var(--accent); font-size: 26px; letter-spacing: 5px; font-weight: 500; text-shadow: 0 0 10px rgba(255, 77, 166, 0.3); }
+        .term-title { color: var(--accent); font-size: 26px; letter-spacing: 5px; font-weight: 500; text-shadow: 0 0 10px rgba(255, 0, 127, 0.3); }
         .term-sub { font-size: 10px; color: var(--dim); margin-top: 6px; letter-spacing: 3px; }
 
         .info-block {
@@ -68,7 +70,7 @@
             line-height: 1.7;
             width: 100%;
             box-sizing: border-box;
-            background: rgba(255,77,166,0.01);
+            background: rgba(255,0,127,0.01);
             font-weight: 300;
         }
         .info-block b { color: var(--accent); }
@@ -88,7 +90,7 @@
             transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
-        .card:hover { border-color: var(--accent); background: rgba(255,77,166,0.02); box-shadow: 0 0 15px rgba(255, 77, 166, 0.05); }
+        .card:hover { border-color: var(--accent); background: rgba(255,0,127,0.02); box-shadow: 0 0 15px rgba(255, 0, 127, 0.05); }
         .card::before { content: ">"; position: absolute; left: 8px; color: var(--accent); opacity: 0; }
         .card:hover::before { opacity: 1; }
         
@@ -114,9 +116,8 @@
         <button class="lang-btn" id="btn-en" onclick="setLang('en')">en</button>
     </div>
 
-    <!-- 🔥 ТВОЙ ЛОГО -->
     <div class="logo-wrap reveal">
-        <img src="logo.png" alt="yui" class="clan-logo">
+        <img src="data:image/jpeg;base64,REPLACE_WITH_BASE64_CODE" alt="yui" class="clan-logo">
     </div>
 
     <header class="terminal-header reveal">
@@ -130,7 +131,8 @@
 
     <span class="section-label reveal">[ system_users ]</span>
 
-    <div id="team-grid"></div>
+    <div id="team-grid">
+        </div>
 
     <div class="footer">
         made by @recidivismnational // sys_id_026
