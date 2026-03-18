@@ -2,27 +2,26 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>blood ravens // terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&family=Inter:wght@100;200;300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/scrollreveal"></script>
     <style>
         :root {
             --bg: #030305;
-            --term-bg: rgba(15, 10, 20, 0.6);
+            --term-bg: rgba(20, 10, 25, 0.7);
             --accent: #ff007f;
             --accent-glow: rgba(255, 0, 127, 0.5);
             --text-main: #e0e0e0;
-            --text-dim: #505050;
-            --border: rgba(255, 0, 127, 0.2);
+            --text-dim: #444;
+            --border: rgba(255, 0, 127, 0.25);
             --font-mono: 'Fira Code', monospace;
-            --font-main: 'Inter', sans-serif;
         }
 
         body {
             background-color: var(--bg);
             color: var(--text-main);
-            font-family: var(--font-main);
+            font-family: 'Inter', sans-serif;
             margin: 0; padding: 0;
             overflow-x: hidden;
             text-transform: lowercase;
@@ -41,7 +40,7 @@
 
         .container { 
             width: 90%; 
-            max-width: 850px; 
+            max-width: 800px; 
             padding: 40px 0; 
             position: relative; 
             z-index: 1; 
@@ -50,16 +49,17 @@
             align-items: center;
         }
 
-        .lang-switch { display: flex; gap: 10px; justify-content: flex-end; width: 100%; margin-bottom: 30px; }
+        .lang-switch { display: flex; gap: 10px; justify-content: flex-end; width: 100%; margin-bottom: 20px; }
         .lang-btn { background: rgba(255,255,255,0.02); border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 6px 12px; font-family: var(--font-mono); font-size: 11px; border-radius: 8px; }
         .lang-btn.active { color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
 
+        /* ASCII ФИКС - ЦЕНТР И МАСШТАБ */
         .ascii-wrap {
             width: 100%;
-            overflow-x: hidden;
             display: flex;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            pointer-events: none;
         }
         .ascii-logo {
             color: var(--accent);
@@ -67,104 +67,86 @@
             line-height: 3px;
             white-space: pre;
             text-align: center;
-            filter: drop-shadow(0 0 5px var(--accent-glow));
-            opacity: 0.7;
-        }
-
-        .logo-wrap {
-            margin-bottom: 40px;
-            display: flex;
-            justify-content: center;
-        }
-        .clan-logo {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-            object-fit: cover;
-            animation: breathing 3s ease-in-out infinite;
-        }
-        @keyframes breathing {
-            0%, 100% { box-shadow: 0 0 20px var(--accent-glow); transform: scale(1); }
-            50% { box-shadow: 0 0 45px var(--accent-glow); transform: scale(1.03); }
+            filter: drop-shadow(0 0 8px var(--accent-glow));
         }
 
         .terminal-header {
             background: var(--term-bg);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 25px;
+            border-radius: 24px;
+            padding: 30px;
             margin-bottom: 40px;
             text-align: center;
             width: 100%;
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             box-sizing: border-box;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
         }
-        .term-title { color: var(--accent); font-size: 26px; letter-spacing: 5px; font-family: var(--font-mono); font-weight: 600; }
-        .term-sub { font-size: 10px; color: var(--text-dim); margin-top: 8px; letter-spacing: 3px; font-family: var(--font-mono); }
+        .term-title { color: var(--accent); font-size: 28px; letter-spacing: 6px; font-family: var(--font-mono); font-weight: 600; text-shadow: 0 0 15px var(--accent-glow); }
+        .term-sub { font-size: 10px; color: var(--text-dim); margin-top: 10px; letter-spacing: 3px; font-family: var(--font-mono); }
 
         .info-block {
             margin-bottom: 50px;
-            padding: 25px;
+            padding: 30px;
             background: var(--term-bg);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            font-size: 14px;
-            line-height: 1.7;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            font-size: 15px;
+            line-height: 1.8;
             width: 100%;
             box-sizing: border-box;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .info-block b { color: var(--accent); }
 
-        .section-label { font-size: 10px; color: var(--text-dim); margin: 30px 0 20px 0; letter-spacing: 5px; text-transform: uppercase; font-family: var(--font-mono); width: 100%; text-align: center; }
+        .section-label { font-size: 10px; color: var(--text-dim); margin: 30px 0 25px 0; letter-spacing: 6px; text-transform: uppercase; font-family: var(--font-mono); width: 100%; text-align: center; }
 
         #team-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 20px;
             width: 100%;
-            perspective: 1000px;
+            perspective: 1200px;
         }
         
-        /* ССЫЛКА ВНУТРИ КАРТОЧКИ */
-        .card-link { text-decoration: none; color: inherit; display: block; }
+        .card-link { text-decoration: none; color: inherit; display: block; border-radius: 20px; }
         
         .card {
             background: var(--term-bg);
             border: 1px solid var(--border);
             padding: 25px;
-            border-radius: 18px;
-            backdrop-filter: blur(12px);
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            transition: transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
             text-align: center;
             cursor: pointer;
             transform-style: preserve-3d;
         }
         .card:hover { 
             border-color: var(--accent); 
-            box-shadow: 0 15px 40px rgba(255, 0, 127, 0.3); 
+            box-shadow: 0 15px 45px rgba(255, 0, 127, 0.35); 
             background: rgba(255, 0, 127, 0.08);
-            transform: translateY(-5px) scale(1.02);
         }
         
-        .nick { font-weight: 600; color: #fff; font-size: 17px; font-family: var(--font-mono); }
-        .role { color: var(--accent); font-size: 11px; margin-top: 5px; font-family: var(--font-mono); opacity: 0.8; letter-spacing: 1px; }
+        .nick { font-weight: 600; color: #fff; font-size: 18px; font-family: var(--font-mono); letter-spacing: 1px; }
+        .role { color: var(--accent); font-size: 12px; margin-top: 8px; font-family: var(--font-mono); opacity: 0.9; letter-spacing: 1.5px; }
 
         .footer {
             text-align: center;
             padding: 80px 0 30px 0;
             font-size: 10px;
-            color: #222;
-            letter-spacing: 5px;
+            color: #1a1a1a;
+            letter-spacing: 6px;
             font-family: var(--font-mono);
         }
 
         @media (max-width: 600px) {
-            .term-title { font-size: 20px; }
+            .term-title { font-size: 22px; }
             .ascii-logo { font-size: 2px; line-height: 2px; }
             .container { width: 95%; }
+            .card { padding: 20px; }
         }
     </style>
 </head>
@@ -222,10 +204,6 @@
 :::::-::-::::=::::::-:=:::=####%:....:.-.-#####%%%%##%%######..:.-.....=%%##------------------------
 -------=-:::--::::::-:=:::=####%%*=..:.:..#######%%%########:.:..:=-=*######+-----------------------
         </pre>
-    </div>
-
-    <div class="logo-wrap reveal">
-        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqGhf/aAAwDAQACEQMRAD8A9/ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==" alt="yui" class="clan-logo">
     </div>
 
     <header class="terminal-header reveal">
@@ -296,18 +274,18 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         particles = [];
-        for(let i=0; i<30; i++) {
+        for(let i=0; i<40; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
-                v: 0.2 + Math.random() * 0.4,
-                size: 2 + Math.random() * 4
+                v: 0.15 + Math.random() * 0.35,
+                size: 1.5 + Math.random() * 3
             });
         }
     }
     function drawParticles() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'rgba(255, 0, 127, 0.15)';
+        ctx.fillStyle = 'rgba(255, 0, 127, 0.12)';
         particles.forEach(p => {
             p.y -= p.v;
             if(p.y < -10) p.y = canvas.height + 10;
@@ -324,10 +302,10 @@
                 const rect = card.getBoundingClientRect();
                 const x = (e.clientX - rect.left) / rect.width - 0.5;
                 const y = (e.clientY - rect.top) / rect.height - 0.5;
-                card.style.transform = `perspective(1000px) rotateX(${y * -15}deg) rotateY(${x * 15}deg) translateY(-5px)`;
+                card.style.transform = `rotateX(${y * -12}deg) rotateY(${x * 12}deg) translateY(-8px)`;
             });
             card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)`;
+                card.style.transform = `rotateX(0deg) rotateY(0deg) translateY(0)`;
             });
         });
     }
@@ -340,4 +318,3 @@
 
 </body>
 </html>
-
