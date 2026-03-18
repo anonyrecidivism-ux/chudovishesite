@@ -3,191 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>chudovishe // client</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.js"></script>
+    <title>OSINT_UNIT // OP_CENTER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Inter:wght@200;300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/scrollreveal"></script>
     <style>
         :root {
-            --bg: #030305;
-            --accent: #8a2be2;
-            --border: rgba(138, 43, 226, 0.25);
-            --card-bg: rgba(255, 255, 255, 0.01);
-            --text-main: #ffffff;
-            --text-dim: #444;
+            --bg-main: #010103;
+            --bg-card: rgba(5, 5, 10, 0.7);
+            --accent: #8a2be2; /* Фиолетовый неон */
+            --accent-glow: rgba(138, 43, 226, 0.4);
+            --border: rgba(138, 43, 226, 0.2);
+            --text-main: #eee;
+            --text-dim: #505050;
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'Fira Code', monospace;
         }
 
-        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        body { background-color: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; text-transform: lowercase; }
-        .container { width: 92%; max-width: 460px; padding: 40px 0; position: relative; z-index: 1; }
-        
-        .lang-switch { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 25px; }
-        .lang-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); cursor: pointer; padding: 5px 12px; border-radius: 6px; font-size: 10px; transition: 0.3s; }
-        .lang-btn.active { border-color: var(--accent); color: #fff; box-shadow: 0 0 10px rgba(138, 43, 226, 0.4); }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+            text-transform: lowercase; /* Все буквы маленькие */
+        }
 
-        .header-card { text-align: center; margin-bottom: 50px; }
-        .logo { width: 80px; height: 80px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 0 30px rgba(138, 43, 226, 0.2); margin-bottom: 15px; }
-        h1 { font-size: 24px; letter-spacing: 6px; font-weight: 200; margin: 0; color: #fff; }
-        .subtitle { color: var(--accent); font-size: 10px; letter-spacing: 2px; margin-top: 5px; }
+        /* ФОН: ДИНАМИЧЕСКАЯ СЕТКА ТОЧЕК */
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-        .btn-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 60px; }
-        .btn { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 14px; color: #fff; text-decoration: none; text-align: center; backdrop-filter: blur(10px); transition: 0.3s; font-size: 14px; }
-        .btn:hover { border-color: var(--accent); box-shadow: 0 0 20px rgba(138, 43, 226, 0.3); transform: translateY(-2px); }
+        .container { width: 92%; max-width: 1000px; margin: 0 auto; padding: 60px 0; position: relative; z-index: 1; }
 
-        /* БЛОК ФОРМЫ */
-        .section-box { background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 40px; backdrop-filter: blur(15px); }
-        .label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 4px; display: block; margin-bottom: 20px; text-align: center; }
-        
-        input, textarea { width: 100%; background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 10px; color: #fff; padding: 12px; margin-bottom: 15px; outline: none; font-family: inherit; font-size: 13px; box-sizing: border-box; }
-        .submit-btn { width: 100%; background: var(--accent); color: #fff; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; text-transform: lowercase; transition: 0.3s; box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3); }
-        .submit-btn:active { transform: scale(0.95); }
+        /* HEADER */
+        .header { text-align: center; margin-bottom: 90px; }
+        .header h1 {
+            font-family: var(--font-mono);
+            font-size: 32px;
+            letter-spacing: 8px;
+            margin: 0;
+            font-weight: 400;
+            color: #fff;
+            text-shadow: 0 0 20px var(--accent-glow);
+            border-right: 3px solid var(--accent);
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 2s steps(20, end), blink-caret 0.75s step-end infinite;
+        }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent); } }
 
-        /* БЛОК ПУБЛИЧНЫХ ОТЗЫВОВ */
-        .public-reviews-wrap { width: 100%; margin-top: 20px; }
-        #reviews-list { display: flex; flex-direction: column; gap: 15px; min-height: 50px; }
-        .review-item { background: rgba(138, 43, 226, 0.05); border-left: 3px solid var(--accent); padding: 20px; border-radius: 0 15px 15px 0; backdrop-filter: blur(5px); animation: fadeIn 0.5s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .rev-nick { color: var(--accent); font-weight: bold; font-size: 11px; margin-bottom: 8px; display: block; }
-        .rev-text { color: #ddd; font-size: 13px; line-height: 1.5; text-transform: none; }
+        .subtitle { font-size: 13px; color: var(--accent); letter-spacing: 4px; margin-top: 10px; font-weight: 300; }
 
-        .footer { text-align: center; padding: 60px 0; font-size: 8px; color: #222; letter-spacing: 5px; }
+        /* SECTIONS */
+        .section { margin-bottom: 80px; }
+        .section-title {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 35px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-title::before { content: ''; display: block; width: 40px; height: 1px; background: var(--border); }
+
+        /* ABOUT */
+        .about-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 35px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            line-height: 1.8;
+            font-size: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            font-weight: 300;
+        }
+        .about-card strong { color: var(--accent); font-weight: 600; text-shadow: 0 0 5px var(--accent-glow); }
+
+        /* TEAM GRID - 10 ЧЕЛОВЕК */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        .team-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 25px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            transition: 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .team-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 25px rgba(138, 43, 226, 0.25);
+            transform: scale(1.03);
+            background: rgba(138, 43, 226, 0.03);
+        }
+        .team-card .nick {
+            font-family: var(--font-mono);
+            font-size: 17px;
+            color: #fff;
+            letter-spacing: 1px;
+            margin: 0;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .team-card:hover .nick {
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* CONTACT */
+        .contact-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 22px;
+            border-radius: 14px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: lowercase;
+            transition: 0.3s;
+            letter-spacing: 3px;
+            box-shadow: 0 5px 30px rgba(138, 43, 226, 0.5);
+            font-family: var(--font-main);
+        }
+        .contact-btn:hover { filter: brightness(1.2); transform: scale(1.01); box-shadow: 0 5px 40px rgba(138, 43, 226, 0.6); }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 80px 0;
+            font-size: 10px;
+            color: #1a1a1a; /* Максимально тусклый */
+            letter-spacing: 6px;
+            position: relative;
+            z-index: 1;
+            font-weight: 300;
+        }
     </style>
 </head>
 <body>
-    <canvas id="particleCanvas"></canvas>
+    <canvas id="bgCanvas"></canvas>
+    
     <div class="container">
-        <div class="lang-switch">
-            <button class="lang-btn active" onclick="setLang('ru')">ru</button>
-            <button class="lang-btn" onclick="setLang('en')">en</button>
-        </div>
+        <header class="header reveal">
+            <h1>osint_unit.net</h1>
+            <div class="subtitle">intelligence // defense // justice</div>
+        </header>
 
-        <div class="header-card">
-            <img src="https://t.me/i/userpic/160/chudovisheclient.jpg" alt="logo" class="logo">
-            <h1>chudovishe</h1>
-            <div class="subtitle" id="sub-text">java 1.21.4 // pc & mobile</div>
-        </div>
-
-        <div class="btn-container">
-            <a href="https://t.me/chudovisheclient/347" class="btn" id="btn-dl">скачать jar</a>
-            <a href="https://t.me/chudovisheclient/376" class="btn" id="btn-beta" style="border-color: #333;">купить beta</a>
-        </div>
-
-        <div class="section-box">
-            <span class="label" id="lbl-form">оставить отзыв</span>
-            <input type="text" id="name" placeholder="ник в tg">
-            <textarea id="content" rows="3" placeholder="сообщение..."></textarea>
-            <button id="sendBtn" class="submit-btn" onclick="addReview()">отправить</button>
-        </div>
-
-        <div class="public-reviews-wrap">
-            <span class="label" id="lbl-public" style="margin-bottom: 25px;">публичные отзывы</span>
-            <div id="reviews-list">
-                <div style="text-align: center; color: var(--text-dim); font-size: 12px;">загрузка...</div>
+        <section class="section reveal">
+            <div class="section-title">01_манифест</div>
+            <div class="about-card">
+                мы — независимое подразделение, специализирующееся на <strong>цифровой криминалистике</strong>, OSINT-расследованиях и защите информационного пространства. наша миссия — использование технологий для обеспечения цифровой безопасности и противодействия киберугрозам. мы работаем анонимно, точно и профессионально.
             </div>
-        </div>
+        </section>
 
-        <div class="footer">recidivismnational // static</div>
+        <section class="section reveal">
+            <div class="section-title">02_команда</div>
+            <div class="team-grid">
+                <div class="team-card"><div class="nick">#niko</div></div>
+                <div class="team-card"><div class="nick">@dokser</div></div>
+                <div class="team-card"><div class="nick">@k_stels</div></div>
+                <div class="team-card"><div class="nick">#s_raider</div></div>
+                <div class="team-card"><div class="nick">#t_hunter</div></div>
+                <div class="team-card"><div class="nick">@cyber_ghost</div></div>
+                <div class="team-card"><div class="nick">#net_walker</div></div>
+                <div class="team-card"><div class="nick">@data_cruncher</div></div>
+                <div class="team-card"><div class="nick">@signal_phantom</div></div>
+                <div class="team-card"><div class="nick">#log_hunter</div></div>
+            </div>
+        </section>
+
+        <section class="section reveal" style="text-align: center;">
+            <div class="section-title" style="justify-content: center;">03_связь</div>
+            <button class="contact-btn">secure_channel_tg</button>
+        </section>
+    </div>
+
+    <div class="footer">
+        made by @recidivismnational // ops_center_2026
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://bgcvgxebtyiinxqaqqwcm.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnY3ZneGVidHlpbnhxYXFxd2NtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzkwMTksImV4cCI6MjA4OTM1NTAxOX0.DYe_JAg7v054T4sVwb8jEyxFi4XND_D_tu323FSuJuo';
-        
-        // Ждем загрузки библиотеки Supabase
-        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        const langData = {
-            ru: { sub: "java 1.21.4 // pc & mobile", dl: "скачать jar", beta: "купить beta", f: "оставить отзыв", p: "публичные отзывы", n: "ник в tg", m: "сообщение...", s: "отправить", empty: "здесь пока пусто" },
-            en: { sub: "java 1.21.4 // pc & mobile", dl: "download jar", beta: "buy beta", f: "leave a review", p: "public reviews", n: "tg nickname", m: "message...", s: "send", empty: "no reviews yet" }
-        };
-
-        let currentLang = 'ru';
-
-        function setLang(lang) {
-            currentLang = lang;
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('sub-text').innerText = langData[lang].sub;
-            document.getElementById('btn-dl').innerText = langData[lang].dl;
-            document.getElementById('btn-beta').innerText = langData[lang].beta;
-            document.getElementById('lbl-form').innerText = langData[lang].f;
-            document.getElementById('lbl-public').innerText = langData[lang].p;
-            document.getElementById('name').placeholder = langData[lang].n;
-            document.getElementById('content').placeholder = langData[lang].m;
-            document.getElementById('sendBtn').innerText = langData[lang].s;
-            loadReviews();
-        }
-
-        async function loadReviews() {
-            const list = document.getElementById('reviews-list');
-            try {
-                const { data, error } = await _supabase.from('reviews').select('*').order('created_at', { ascending: false });
-                if (error) throw error;
-                if (!data || data.length === 0) {
-                    list.innerHTML = `<div style="text-align: center; color: var(--text-dim); font-size: 12px;">${langData[currentLang].empty}</div>`;
-                    return;
-                }
-                list.innerHTML = data.map(r => `
-                    <div class="review-item">
-                        <span class="rev-nick">@${r.name}</span>
-                        <p class="rev-text">${r.content}</p>
-                    </div>
-                `).join('');
-            } catch (e) {
-                list.innerHTML = `<div style="text-align: center; color: #ff5555; font-size: 10px;">ошибка подключения к базе</div>`;
-            }
-        }
-
-        async function addReview() {
-            const n = document.getElementById('name').value;
-            const c = document.getElementById('content').value;
-            const b = document.getElementById('sendBtn');
-            
-            if(n.length < 2 || c.length < 2) { alert("заполни поля"); return; }
-            
-            const last = localStorage.getItem('sent');
-            if(last && Date.now() - last < 30000) { alert("подожди 30 сек"); return; }
-
-            b.innerText = "...";
-            b.disabled = true;
-
-            try {
-                const { error } = await _supabase.from('reviews').insert([{ name: n, content: c }]);
-                if(error) throw error;
-                localStorage.setItem('sent', Date.now());
-                document.getElementById('content').value = '';
-                await loadReviews();
-            } catch (e) {
-                alert("ошибка: " + e.message);
-            } finally {
-                b.innerText = langData[currentLang].s;
-                b.disabled = false;
-            }
-        }
-
-        // ПАРТИКЛЫ
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        let pArr = [];
-        function init() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            pArr = [];
-            for(let i=0; i<60; i++) pArr.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-0.5)*0.2, vy:(Math.random()-0.5)*0.2});
+        // АНИМАЦИЯ ФОНА: СЕТКА ТОЧЕК, РЕАГИРУЮЩАЯ НА КУРСОР
+        const canvas = document.getElementById('bgCanvas'); const ctx = canvas.getContext('2d'); let dots = [];
+        let mouse = { x: -100, y: -100 };
+        window.onmousemove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
+        function init() { 
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight; dots = [];
+            const step = 45; for(let x=0; x<canvas.width; x+=step) for(let y=0; y<canvas.height; y+=step) dots.push({x, y});
         }
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = 'rgba(138, 43, 226, 0.4)';
-            pArr.forEach(p => {
-                p.x+=p.vx; p.y+=p.vy;
-                if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
-                if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2); ctx.fill();
-            });
-            requestAnimationFrame(draw);
+            dots.forEach(d => {
+                const dist = Math.hypot(d.x - mouse.x, d.y - mouse.y);
+                ctx.fillStyle = dist < 130 ? 'rgba(138, 43, 226, 0.5)' : 'rgba(255,255,255,0.03)';
+                ctx.beginPath(); ctx.arc(d.x, d.y, 1, 0, Math.PI*2); ctx.fill();
+            }); requestAnimationFrame(draw);
         }
-        window.addEventListener('resize', init);
-        init(); draw();
-        loadReviews();
+        window.onresize = init; init(); draw();
+
+        // АНИМАЦИЯ ПОЯВЛЕНИЯ ПРИ СКРОЛЛЕ (ScrollReveal)
+        ScrollReveal().reveal('.reveal', { delay: 100, distance: '20px', origin: 'bottom', interval: 60, duration: 800, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' });
     </script>
 </body>
 </html>
