@@ -3,221 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OSINT_UNIT // OP_CENTER</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Inter:wght@200;300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/scrollreveal"></script>
+    <title>TERMINAL // OSINT UNIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #010103;
-            --bg-card: rgba(5, 5, 10, 0.7);
-            --accent: #8a2be2; /* Фиолетовый неон */
-            --accent-glow: rgba(138, 43, 226, 0.4);
-            --border: rgba(138, 43, 226, 0.2);
-            --text-main: #eee;
-            --text-dim: #505050;
-            --font-main: 'Inter', sans-serif;
-            --font-mono: 'Fira Code', monospace;
+            --bg: #0a0a0a;
+            --term-bg: #121212;
+            --accent: #ff0000; /* Кроваво-красный */
+            --text: #d0d0d0;
+            --dim: #444;
+            --border: #222;
         }
 
         body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            font-family: var(--font-main);
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Fira Code', monospace;
             margin: 0; padding: 0;
             overflow-x: hidden;
-            text-transform: lowercase; /* Все буквы маленькие */
+            text-transform: lowercase;
         }
 
-        /* ФОН: ДИНАМИЧЕСКАЯ СЕТКА ТОЧЕК */
-        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .container { width: 92%; max-width: 800px; margin: 0 auto; padding: 40px 0; }
 
-        .container { width: 92%; max-width: 1000px; margin: 0 auto; padding: 60px 0; position: relative; z-index: 1; }
+        /* LANG SWITCHER */
+        .lang-switch { display: flex; gap: 15px; justify-content: flex-end; margin-bottom: 20px; }
+        .lang-btn { background: none; border: 1px solid var(--border); color: var(--dim); cursor: pointer; padding: 4px 10px; font-family: inherit; font-size: 11px; }
+        .lang-btn.active { color: var(--accent); border-color: var(--accent); }
 
-        /* HEADER */
-        .header { text-align: center; margin-bottom: 90px; }
-        .header h1 {
-            font-family: var(--font-mono);
-            font-size: 32px;
-            letter-spacing: 8px;
-            margin: 0;
-            font-weight: 400;
-            color: #fff;
-            text-shadow: 0 0 20px var(--accent-glow);
-            border-right: 3px solid var(--accent);
-            display: inline-block;
-            white-space: nowrap;
-            overflow: hidden;
-            animation: typing 2s steps(20, end), blink-caret 0.75s step-end infinite;
+        /* КРАСНЫЙ ВОРОН (SVG) */
+        .logo-wrap { text-align: center; margin-bottom: 40px; }
+        .raven-icon { width: 80px; fill: var(--accent); filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.4)); }
+
+        /* ТЕРМИНАЛ ХЕДЕР */
+        .terminal-header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
         }
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent); } }
+        .term-title { color: var(--accent); font-size: 18px; letter-spacing: 2px; }
+        .term-sub { font-size: 10px; color: var(--dim); margin-top: 5px; }
 
-        .subtitle { font-size: 13px; color: var(--accent); letter-spacing: 4px; margin-top: 10px; font-weight: 300; }
-
-        /* SECTIONS */
-        .section { margin-bottom: 80px; }
-        .section-title {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-dim);
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            margin-bottom: 35px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .section-title::before { content: ''; display: block; width: 40px; height: 1px; background: var(--border); }
-
-        /* ABOUT */
-        .about-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 35px;
-            border-radius: 20px;
-            backdrop-filter: blur(20px);
-            line-height: 1.8;
-            font-size: 16px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-            font-weight: 300;
-        }
-        .about-card strong { color: var(--accent); font-weight: 600; text-shadow: 0 0 5px var(--accent-glow); }
-
-        /* TEAM GRID - 10 ЧЕЛОВЕК */
-        .team-grid {
+        /* СЕТКА УЧАСТНИКОВ */
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 15px;
         }
-        .team-card {
-            background: var(--bg-card);
+        .card {
+            background: var(--term-bg);
             border: 1px solid var(--border);
-            padding: 25px;
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            transition: 0.3s cubic-bezier(0.2, 0, 0.2, 1);
-            text-align: center;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 15px;
+            transition: 0.2s;
+            position: relative;
         }
-        .team-card:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 25px rgba(138, 43, 226, 0.25);
-            transform: scale(1.03);
-            background: rgba(138, 43, 226, 0.03);
-        }
-        .team-card .nick {
-            font-family: var(--font-mono);
-            font-size: 17px;
-            color: #fff;
-            letter-spacing: 1px;
-            margin: 0;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        .team-card:hover .nick {
-            color: var(--accent);
-            text-shadow: 0 0 10px var(--accent-glow);
-        }
+        .card:hover { border-color: var(--accent); }
+        .card::before { content: ">"; position: absolute; left: 8px; color: var(--accent); opacity: 0; transition: 0.2s; }
+        .card:hover::before { opacity: 1; }
+        
+        .nick { font-weight: 500; color: #fff; margin-left: 15px; }
+        .role { color: var(--accent); font-size: 11px; margin-top: 5px; margin-left: 15px; opacity: 0.8; }
 
-        /* CONTACT */
-        .contact-btn {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 22px;
-            border-radius: 14px;
-            width: 100%;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 800;
-            text-transform: lowercase;
-            transition: 0.3s;
-            letter-spacing: 3px;
-            box-shadow: 0 5px 30px rgba(138, 43, 226, 0.5);
-            font-family: var(--font-main);
+        /* ИНФО БЛОК */
+        .info-block {
+            margin-top: 50px;
+            padding: 20px;
+            border: 1px dashed var(--dim);
+            font-size: 13px;
+            line-height: 1.6;
         }
-        .contact-btn:hover { filter: brightness(1.2); transform: scale(1.01); box-shadow: 0 5px 40px rgba(138, 43, 226, 0.6); }
+        .info-block b { color: var(--accent); }
 
-        /* FOOTER */
         .footer {
             text-align: center;
-            padding: 80px 0;
+            padding: 80px 0 20px 0;
             font-size: 10px;
-            color: #1a1a1a; /* Максимально тусклый */
-            letter-spacing: 6px;
-            position: relative;
-            z-index: 1;
-            font-weight: 300;
+            color: #1a1a1a;
+            letter-spacing: 4px;
         }
     </style>
 </head>
 <body>
-    <canvas id="bgCanvas"></canvas>
-    
-    <div class="container">
-        <header class="header reveal">
-            <h1>osint_unit.net</h1>
-            <div class="subtitle">intelligence // defense // justice</div>
-        </header>
 
-        <section class="section reveal">
-            <div class="section-title">01_манифест</div>
-            <div class="about-card">
-                мы — независимое подразделение, специализирующееся на <strong>цифровой криминалистике</strong>, OSINT-расследованиях и защите информационного пространства. наша миссия — использование технологий для обеспечения цифровой безопасности и противодействия киберугрозам. мы работаем анонимно, точно и профессионально.
-            </div>
-        </section>
-
-        <section class="section reveal">
-            <div class="section-title">02_команда</div>
-            <div class="team-grid">
-                <div class="team-card"><div class="nick">#niko</div></div>
-                <div class="team-card"><div class="nick">@dokser</div></div>
-                <div class="team-card"><div class="nick">@k_stels</div></div>
-                <div class="team-card"><div class="nick">#s_raider</div></div>
-                <div class="team-card"><div class="nick">#t_hunter</div></div>
-                <div class="team-card"><div class="nick">@cyber_ghost</div></div>
-                <div class="team-card"><div class="nick">#net_walker</div></div>
-                <div class="team-card"><div class="nick">@data_cruncher</div></div>
-                <div class="team-card"><div class="nick">@signal_phantom</div></div>
-                <div class="team-card"><div class="nick">#log_hunter</div></div>
-            </div>
-        </section>
-
-        <section class="section reveal" style="text-align: center;">
-            <div class="section-title" style="justify-content: center;">03_связь</div>
-            <button class="contact-btn">secure_channel_tg</button>
-        </section>
+<div class="container">
+    <div class="lang-switch">
+        <button class="lang-btn active" onclick="setLang('ru')">ru</button>
+        <button class="lang-btn" onclick="setLang('en')">en</button>
     </div>
+
+    <div class="logo-wrap">
+        <svg class="raven-icon" viewBox="0 0 24 24">
+            <path d="M21,12C21,12 19,5 12,5C5,5 3,12 3,12C3,12 5,19 12,19C19,19 21,12 21,12M12,17C9.24,17 7,14.76 7,12C7,9.24 9.24,7 12,7C14.76,7 17,9.24 17,12C17,14.76 14.76,17 12,17M12,9C10.34,9 9,10.34 9,12C9,13.66 10.34,15 12,15C13.66,15 15,13.66 15,12C15,10.34 13.66,9 12,9Z" opacity="0.2"/>
+            <path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z" />
+        </svg>
+    </div>
+
+    <header class="terminal-header">
+        <div class="term-title" id="t-head">root@osint_unit:~#</div>
+        <div class="term-sub" id="t-sub">established 2026 // active protection</div>
+    </header>
+
+    <div class="info-block" id="t-desc">
+        мы используем <b>osint</b> и цифровые инструменты для обеспечения безопасности. наша цель — защита мирных пользователей и пресечение деструктивной деятельности в сети.
+    </div>
+
+    <div class="section-title" style="margin: 40px 0 20px 0; font-size: 12px; color: var(--dim);">[ system_users ]</div>
+
+    <div class="grid" id="team-grid">
+        </div>
 
     <div class="footer">
-        made by @recidivismnational // ops_center_2026
+        made by @recidivismnational // sys_id_026
     </div>
+</div>
 
-    <script>
-        // АНИМАЦИЯ ФОНА: СЕТКА ТОЧЕК, РЕАГИРУЮЩАЯ НА КУРСОР
-        const canvas = document.getElementById('bgCanvas'); const ctx = canvas.getContext('2d'); let dots = [];
-        let mouse = { x: -100, y: -100 };
-        window.onmousemove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
-        function init() { 
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight; dots = [];
-            const step = 45; for(let x=0; x<canvas.width; x+=step) for(let y=0; y<canvas.height; y+=step) dots.push({x, y});
-        }
-        function draw() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            dots.forEach(d => {
-                const dist = Math.hypot(d.x - mouse.x, d.y - mouse.y);
-                ctx.fillStyle = dist < 130 ? 'rgba(138, 43, 226, 0.5)' : 'rgba(255,255,255,0.03)';
-                ctx.beginPath(); ctx.arc(d.x, d.y, 1, 0, Math.PI*2); ctx.fill();
-            }); requestAnimationFrame(draw);
-        }
-        window.onresize = init; init(); draw();
+<script>
+    const team = [
+        { n: "@xuvof", r: "осинт/эдитор", e: "osint/editor" },
+        { n: "@fallen_fly", r: "осинт", e: "osint" },
+        { n: "@recidivismnational", r: "кодер/дизайнер", e: "coder/designer" },
+        { n: "@fucksomer", r: "осинт", e: "osint" },
+        { n: "@UnTaLeNteD0", r: "тролль", e: "troll" },
+        { n: "@loreitov", r: "осинт", e: "osint" },
+        { n: "@Bladiclavaa", r: "тролль", e: "troll" },
+        { n: "@wortix69", r: "осинт/тролль", e: "osint/troll" },
+        { n: "@aominx", r: "осинт", e: "osint" },
+        { n: "@martxxxxxxxxx", r: "осинт", e: "osint" }
+    ];
 
-        // АНИМАЦИЯ ПОЯВЛЕНИЯ ПРИ СКРОЛЛЕ (ScrollReveal)
-        ScrollReveal().reveal('.reveal', { delay: 100, distance: '20px', origin: 'bottom', interval: 60, duration: 800, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' });
-    </script>
+    const langData = {
+        ru: { head: "root@osint_unit:~#", sub: "основано 2026 // активная защита", desc: "мы используем <b>osint</b> и цифровые инструменты для обеспечения безопасности. наша цель — защита мирных пользователей и пресечение деструктивной деятельности в сети." },
+        en: { head: "root@osint_unit:~#", sub: "est. 2026 // active defense", desc: "we utilize <b>osint</b> and digital tools to maintain security. our mission is to protect peaceful users and neutralize destructive online activity." }
+    };
+
+    function setLang(lang) {
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        document.getElementById('t-head').innerText = langData[lang].head;
+        document.getElementById('t-sub').innerText = langData[lang].sub;
+        document.getElementById('t-desc').innerHTML = langData[lang].desc;
+
+        const grid = document.getElementById('team-grid');
+        grid.innerHTML = team.map(m => `
+            <div class="card">
+                <div class="nick">${m.n}</div>
+                <div class="role">${lang === 'ru' ? m.r : m.e}</div>
+            </div>
+        `).join('');
+    }
+
+    // Инициализация
+    setLang('ru');
+</script>
+
 </body>
 </html>
 
