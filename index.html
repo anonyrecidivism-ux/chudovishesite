@@ -197,7 +197,7 @@ button:disabled { opacity: 0.5; cursor: wait; }
 /* Widgets */
 .w-flex { display: flex; gap: 15px; align-items: center; margin-bottom: 10px; }
 .w-avatar { width: 70px; height: 70px; border-radius: 15px; border: 2px solid #fff; background: rgba(255,255,255,0.1); object-fit: cover; }
-.w-status { font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+.w-status { font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; margin-left: 5px; }
 .online { background: var(--status-on); color: #000; }
 .offline { background: var(--status-off); color: #000; }
 
@@ -220,11 +220,16 @@ button:disabled { opacity: 0.5; cursor: wait; }
   font-weight: bold;
   background: rgba(0,0,0,0.1);
   transition: 0.2s;
+  word-break: break-word;
 }
 .grid a:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
 
+/* Deep Links styling */
+.app-link { background: rgba(255,255,255,0.2) !important; border: 1px solid #fff !important; }
+.app-link:hover { background: #fff !important; color: #ff85a2 !important; }
+
 .map-box {
-  width: 100%; height: 180px; border-radius: 12px; overflow: hidden; margin-top: 8px; border: 1px solid rgba(255,255,255,0.3);
+  width: 100%; height: 180px; border-radius: 12px; overflow: hidden; margin-top: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.1);
 }
 
 .footer { margin-top: 40px; font-size: 11px; color: rgba(255, 255, 255, 0.7); text-align: center; }
@@ -239,6 +244,7 @@ button:disabled { opacity: 0.5; cursor: wait; }
 .modal-c {
   width: 90%; max-width: 500px; background: rgba(255, 182, 193, 0.95);
   padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
 }
 .modal-c textarea {
   width: 100%; height: 250px; background: rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.4);
@@ -254,7 +260,7 @@ button:disabled { opacity: 0.5; cursor: wait; }
   <div class="header">
     <div class="title-block">
       <div class="title">recidivismoss | toolkit</div>
-      <div class="author">by @recidivismnational <span onclick="toggleNp()">📝 notepad</span></div>
+      <div class="author">by @recidivismnational <span onclick="toggleNp()">[notepad]</span></div>
     </div>
     <img src="43313.png" onerror="this.onerror=null; this.src='https://i.postimg.cc/xCzkznN1/file-00000000170471f4b4f82e3d4fc7aa20.png'" alt="logo" class="logo-img">
   </div>
@@ -272,30 +278,36 @@ button:disabled { opacity: 0.5; cursor: wait; }
 
   <button id="scan-btn" onclick="run()">initiate scan</button>
   <div id="out"></div>
-  <div class="footer">recidivismoss toolkit · build v1.2 (stable)</div>
+  <div class="footer">recidivismoss toolkit · build v1.3.1 (strict mode)</div>
 </div>
 
 <div class="modal" id="np-m">
   <div class="modal-c">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <h3 style="margin:0;">notepad</h3>
-      <span style="cursor:pointer; font-size:24px;" onclick="toggleNp()">×</span>
+      <span style="cursor:pointer; font-size:24px;" onclick="toggleNp()">x</span>
     </div>
     <textarea id="np-t" placeholder="data here..."></textarea>
     <div style="display:flex; gap:10px;">
-      <button onclick="expTxt()" style="margin:0;">.txt</button>
-      <button onclick="expPdf()" style="margin:0;">.pdf</button>
+      <button onclick="expTxt()" style="margin:0; padding:12px; font-size:13px; flex:1;">export .txt</button>
+      <button onclick="expPdf()" style="margin:0; padding:12px; font-size:13px; flex:1;">export .pdf</button>
     </div>
   </div>
 </div>
 
 <script>
-// === СИНТАКСИЧЕСКИ ПРАВИЛЬНЫЙ ФИКС ===
+// === ИДЕАЛЬНЫЙ ESCAPE (БЕЗ ОШИБОК) ===
 function esc(str) {
   if (!str) return "";
-  return String(str).replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  return String(str)
+    .replace(/&/g, "&")
+    .replace(/</g, "<")
+    .replace(/>/g, ">")
+    .replace(/"/g, """)
+    .replace(/'/g, "'");
 }
 
+// === NOTEPAD ===
 const npt = document.getElementById("np-t");
 const npm = document.getElementById("np-m");
 npt.value = localStorage.getItem("rmoss_np") || "";
@@ -306,7 +318,7 @@ npm.onclick = (e) => { if(e.target===npm) toggleNp(); };
 function save(e, title, text) {
   npt.value += `\n[${title.toUpperCase()}]\n${text.trim()}\n`;
   localStorage.setItem("rmoss_np", npt.value);
-  const b = e.target; b.innerText = "✓";
+  const b = e.target; b.innerText = "[saved]";
   setTimeout(() => b.innerText = "[+]", 1000);
 }
 
@@ -320,7 +332,7 @@ function expTxt() {
 function expPdf() {
   const win = window.open('', '_blank');
   win.document.write(`<html><body style="font-family:monospace;white-space:pre-wrap;padding:20px;"><h2>recidivismoss export</h2><hr>${esc(npt.value)}</body></html>`);
-  win.document.close();
+  win.document.close(); win.focus();
   setTimeout(() => win.print(), 500);
 }
 
@@ -345,6 +357,22 @@ function detect(q) {
   return "socials";
 }
 
+function analyzePhone(digits) {
+  let info = { region: "unknown", carrier: "unknown" };
+  if (digits.startsWith('380')) {
+    info.region = "ukraine"; let code = digits.substring(3, 5);
+    if (['67','68','96','97','98'].includes(code)) info.carrier = "kyivstar";
+    else if (['50','66','95','99'].includes(code)) info.carrier = "vodafone";
+    else if (['63','73','93'].includes(code)) info.carrier = "lifecell";
+  } else if (digits.startsWith('79')) {
+    info.region = "russia"; let code = digits.substring(1, 4);
+    if (['91','98'].some(c => code.startsWith(c))) info.carrier = "mts";
+    else if (['92','93'].some(c => code.startsWith(c))) info.carrier = "megafon";
+    else if (['99'].some(c => code.startsWith(c))) info.carrier = "tele2";
+  }
+  return info;
+}
+
 async function run() {
   const q = document.getElementById("q").value.trim();
   if(!q) return;
@@ -354,42 +382,143 @@ async function run() {
   out.innerHTML = "";
   const type = detect(q);
 
+  addC("target analysis", `query: ${q}\ntype: ${type}`);
+
   try {
+    // === 1. IP SCAN ===
     if (type === "ip") {
-      const d = await fetch(`https://ipwho.is/${encodeURIComponent(q)}`).then(r=>r.json());
-      if(d.success) {
-        const sec = d.security || {};
-        const threat = (sec.vpn || sec.proxy || sec.tor) ? "🚨 threat: vpn/proxy detected" : "✅ threat: clean residential";
-        addC("ip intel", `status: ${threat}\nasn: ${d.connection?.asn}\ncountry: ${d.country} ${d.flag?.emoji || ''}\ncity: ${d.city}`);
-        addH("map", `<div class="map-box"><iframe width="100%" height="100%" frameborder="0" src="https://maps.google.com/maps?q=${d.latitude},${d.longitude}&z=12&output=embed"></iframe></div>`);
+      let lat, lon;
+      try {
+        const d = await fetch(`https://ipwho.is/${encodeURIComponent(q)}`).then(r=>r.json());
+        if(d.success) {
+          const sec = d.security || {};
+          const threat = (sec.vpn || sec.proxy || sec.tor) ? "[WARN] vpn/proxy detected" : "[OK] clean residential";
+          addC("ip intelligence", `status: ${threat}\nasn: ${d.connection?.asn}\ncountry: ${d.country}\ncity: ${d.city}`);
+          lat = d.latitude; lon = d.longitude;
+        }
+      } catch(e) {
+        const fb = await fetch(`https://ipapi.co/${encodeURIComponent(q)}/json/`).then(r=>r.json());
+        addC("geolocation (fallback)", `org: ${fb.org}\ncountry: ${fb.country_name}\ncity: ${fb.city}`);
+        lat = fb.latitude; lon = fb.longitude;
       }
+      
+      if(lat && lon) {
+        addH("map view", `<div class="map-box"><iframe width="100%" height="100%" frameborder="0" src="https://maps.google.com/maps?q=$${lat},${lon}&hl=en&z=12&output=embed"></iframe></div>`);
+      }
+
+      addH("advanced threat databases", `<div class="grid">
+        <a href="https://www.virustotal.com/gui/ip-address/${encodeURIComponent(q)}" target="_blank">virustotal</a>
+        <a href="https://shodan.io/host/${encodeURIComponent(q)}" target="_blank">shodan</a>
+        <a href="https://search.censys.io/hosts/${encodeURIComponent(q)}" target="_blank">censys.io</a>
+        <a href="https://www.abuseipdb.com/check/${encodeURIComponent(q)}" target="_blank">abuseipdb</a>
+        <a href="https://otx.alienvault.com/indicator/ip/${encodeURIComponent(q)}" target="_blank">alienvault</a>
+        <a href="https://viz.greynoise.io/ip/${encodeURIComponent(q)}" target="_blank">greynoise</a>
+        <a href="https://www.ipqualityscore.com/free-ip-lookup-proxy-vpn-test/lookup/${encodeURIComponent(q)}" target="_blank">ipqualityscore</a>
+      </div>`);
     }
 
+    // === 2. DOMAIN SCAN ===
+    if(type === "domain") {
+       const cl = q.replace(/https?:\/\//, "").split("/")[0];
+       try {
+         const dns = await fetch(`https://networkcalc.com/api/dns/lookup/${encodeURIComponent(cl)}`).then(r=>r.json());
+         if(dns.records) addC("dns records", JSON.stringify(dns.records, null, 2));
+         
+         if (dns.records && dns.records.A && dns.records.A.length > 0) {
+          const hostIp = dns.records.A[0].address;
+          const ipData = await fetch(`https://ipapi.co/${encodeURIComponent(hostIp)}/json/`).then(r => r.json());
+          if (ipData.latitude && ipData.longitude) {
+            addC("server geolocation", `resolved ip: ${hostIp}\norg: ${ipData.org}\ncountry: ${ipData.country_name}\ncity: ${ipData.city}`);
+            addH("server map", `<div class="map-box"><iframe width="100%" height="100%" frameborder="0" src="https://maps.google.com/maps?q=$${ipData.latitude},${ipData.longitude}&hl=en&z=12&output=embed"></iframe></div>`);
+          }
+         }
+       } catch(e) {}
+       
+       addH("domain osint tools", `<div class="grid">
+        <a href="https://whois.domaintools.com/${cl}" target="_blank">whois</a>
+        <a href="https://dnsdumpster.com/" target="_blank">dnsdumpster</a>
+        <a href="https://urlscan.io/search/#domain:${cl}" target="_blank">urlscan.io</a>
+        <a href="https://securitytrails.com/domain/${cl}/dns" target="_blank">securitytrails</a>
+        <a href="https://crt.sh/?q=${cl}" target="_blank">ssl certs</a>
+       </div>`);
+    }
+
+    // === 3. PHONE SCAN ===
     if (type === "phone") {
       const digits = q.replace(/\D/g, "");
-      addC("phone intel", `formatted: +${digits}\nresolution: check databases below...`);
-      addH("phone databases", `<div class="grid">
-        <a href="tg://resolve?phone=${digits}">📱 telegram</a>
-        <a href="https://web.getcontact.com/">🔍 getcontact</a>
-        <a href="https://sync.me/search/?number=${digits}">🔗 sync.me</a>
-        <a href="https://numbuster.com/ru/phone/${digits}">🔗 numbuster</a>
-        <a href="https://www.truecaller.com/search/global/${digits}">🔗 truecaller</a>
+      const info = analyzePhone(digits);
+      addC("local intelligence", `region: ${info.region}\ncarrier: ${info.carrier}\nformatted: +${digits}`);
+      
+      addH("direct messengers", `<div class="grid">
+        <a href="tg://resolve?phone=${digits}" class="app-link">telegram</a>
+        <a href="whatsapp://send?phone=${digits}" class="app-link">whatsapp</a>
+        <a href="viber://contact?number=%2B${digits}" class="app-link">viber</a>
+        <a href="skype:${digits}?call" class="app-link">skype</a>
+      </div>`);
+
+      addH("caller id & reputation", `<div class="grid">
+        <a href="https://web.getcontact.com/" target="_blank">getcontact</a>
+        <a href="https://sync.me/search/?number=${digits}" target="_blank">sync.me</a>
+        <a href="https://numbuster.com/ru/phone/${digits}" target="_blank">numbuster</a>
+        <a href="https://www.truecaller.com/search/global/${digits}" target="_blank">truecaller</a>
+        <a href="https://tellows.com/num/${digits}" target="_blank">tellows</a>
+        <a href="https://www.callapp.com/phone/${digits}" target="_blank">callapp</a>
+      </div>`);
+
+      addH("advanced leaks & dorks", `<div class="grid">
+        <a href="https://intelx.io/?s=${digits}" target="_blank">intelx leaks</a>
+        <a href="https://www.google.com/search?q=%22${digits}%22" target="_blank">google dork</a>
+        <a href="https://yandex.com/search/?text=%22${digits}%22" target="_blank">yandex search</a>
       </div>`);
     }
 
+    // === 4. EMAIL SCAN ===
     if (type === "email") {
       const em = q.toLowerCase();
-      addH("identity", `<div class="w-flex"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(em)}" class="w-avatar" style="background:#fff;"><div class="w-flex"><b>${esc(em)}</b></div></div>`);
-      addH("email osint", `<div class="grid">
-        <a href="https://epieos.com/?q=${encodeURIComponent(em)}">🔍 epieos (google)</a>
-        <a href="https://intelx.io/?s=${encodeURIComponent(em)}">📂 intelx leaks</a>
-        <a href="https://leakcheck.io/search?type=email&query=${encodeURIComponent(em)}">📂 leakcheck</a>
-        <a href="https://haveibeenpwned.com/account/${encodeURIComponent(em)}">📂 hibp</a>
+      const domain = em.split('@')[1];
+
+      addH("identity", `<div class="w-flex"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(em)}&backgroundColor=b6e3f4" class="w-avatar" style="background:#fff;"><div class="w-info"><b>${esc(em)}</b><br><span style="opacity:0.7">domain: ${esc(domain)}</span></div></div>`);
+      
+      try {
+        const check = await fetch(`https://disposable.debounce.io/?email=${encodeURIComponent(em)}`).then(r=>r.json());
+        const isDisp = check.disposable === "true";
+        addC("security check", `disposable/temp mail: ${isDisp ? "[WARN] YES" : "[OK] NO"}`);
+      } catch(e) {}
+
+      try {
+        const dns = await fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=MX`).then(r=>r.json());
+        addC("mx records", dns.Answer ? `[OK] active servers: ${dns.Answer.length}` : `[FAIL] dead domain`);
+      } catch(e) {}
+
+      addH("osint & reputation", `<div class="grid">
+        <a href="https://epieos.com/?q=${encodeURIComponent(em)}" target="_blank">epieos</a>
+        <a href="https://emailrep.io/${encodeURIComponent(em)}" target="_blank">emailrep.io</a>
+        <a href="https://hunter.io/email-verifier/${encodeURIComponent(em)}" target="_blank">hunter.io</a>
+        <a href="https://www.skymem.info/srch?q=${encodeURIComponent(domain)}" target="_blank">skymem domain</a>
+        <a href="https://rocketreach.co/search?keyword=${encodeURIComponent(em)}" target="_blank">rocketreach</a>
+      </div>`);
+
+      addH("breach databases", `<div class="grid">
+        <a href="https://haveibeenpwned.com/account/${encodeURIComponent(em)}" target="_blank">hibp</a>
+        <a href="https://intelx.io/?s=${encodeURIComponent(em)}" target="_blank">intelx leaks</a>
+        <a href="https://leakcheck.io/search?type=email&query=${encodeURIComponent(em)}" target="_blank">leakcheck</a>
+        <a href="https://snusbase.com/" target="_blank">snusbase</a>
+        <a href="https://leak-lookup.com/search" target="_blank">leak-lookup</a>
+        <a href="https://dehashed.com/search?query=${encodeURIComponent(em)}" target="_blank">dehashed</a>
+        <a href="https://breachdirectory.org/search?query=${encodeURIComponent(em)}" target="_blank">breachdirectory</a>
+      </div>`);
+
+      addH("advanced dorks", `<div class="grid">
+        <a href="https://www.google.com/search?q=%22${encodeURIComponent(em)}%22" target="_blank">google exact</a>
+        <a href="https://www.google.com/search?q=site:pastebin.com+%22${encodeURIComponent(em)}%22" target="_blank">pastebin logs</a>
       </div>`);
     }
 
+    // === 5. SOCIALS SCAN ===
     if (type === "socials") {
       const u = encodeURIComponent(q.replace(/\s/g, ""));
+      const clName = q.replace(/\s/g, "");
+
       try {
         const rS = await fetch(`https://users.roproxy.com/v1/users/search?keyword=${u}&limit=1`).then(r=>r.json());
         if(rS.data && rS.data.length > 0) {
@@ -402,33 +531,44 @@ async function run() {
             fetch(`https://presence.roproxy.com/v1/presence/users`, {method:'POST', body:JSON.stringify({userIds:[uid]})}).then(r=>r.json())
           ]);
           const isOn = st.userPresences?.[0]?.userPresenceType > 0;
-          const h = `<div class="w-flex"><img src="${av.data[0]?.imageUrl || ''}" class="w-avatar"><div class="w-info"><b>${esc(p.displayName)}</b> <span class="w-status ${isOn?'online':'offline'}">${isOn?'online':'off'}</span><br><span style="opacity:0.7">@${esc(p.name)}</span></div></div><div style="margin:10px 0; padding:10px; background:rgba(0,0,0,0.1); border-radius:10px;"><i>${esc(p.description || "no bio")}</i></div><div style="display:flex; justify-content:space-between; font-size:11px;"><span>👥 fr: ${fr.count}</span><span>📈 fol: ${fw.count}</span></div>`;
-          addHC("roblox profile", h, `user: ${p.name} | id: ${uid}`);
+          const h = `<div class="w-flex"><img src="${av.data[0]?.imageUrl || ''}" class="w-avatar"><div class="w-info"><b>${esc(p.displayName)}</b> <span class="w-status ${isOn?'online':'offline'}">${isOn?'online':'offline'}</span><br><span style="opacity:0.7">@${esc(p.name)}</span><br><span style="font-size:11px;opacity:0.5;">id: ${uid}</span></div></div><div style="margin:10px 0; padding:10px; background:rgba(0,0,0,0.1); border-radius:10px;"><i>${esc(p.description || "no bio")}</i></div><div style="display:flex; justify-content:space-between; font-size:11px; font-weight:bold; opacity:0.9;"><span>friends: ${fr.count||0}</span><span>followers: ${fw.count||0}</span><span>joined: ${new Date(p.created).getFullYear()}</span></div>`;
+          addHC("roblox profile widget", h, `user: ${p.name} | id: ${uid}`);
         }
       } catch(e) {}
-      addH("social databases", `<div class="grid">
-        <a href="https://t.me/${u}">📱 telegram</a>
-        <a href="https://discordlookup.com/user/${u}">🎧 discord</a>
-        <a href="https://whatsmyname.app/?q=${u}">🔍 sherlock</a>
-        <a href="https://www.tiktok.com/@${u}">🎵 tiktok</a>
-        <a href="https://vk.com/${u}">📘 vk</a>
+
+      try {
+        const gh = await fetch(`https://api.github.com/users/${u}`).then(r=>r.json());
+        if (gh.id) {
+          const ghHtml = `<div class="w-flex"><img src="${gh.avatar_url}" class="w-avatar"><div class="w-info"><b>${esc(gh.name || clName)}</b><br><span style="opacity:0.7">@${esc(gh.login)}</span></div></div><div style="margin:10px 0; font-size:12px;"><i>${esc(gh.bio || "no bio")}</i></div><div style="display:flex; justify-content:space-between; font-size:11px; opacity:0.9;"><span>repos: ${gh.public_repos}</span><span>followers: ${gh.followers}</span></div>`;
+          addHC("github widget", ghHtml, `github: ${gh.login}`);
+        }
+      } catch(e) {}
+
+      addH("app deep links", `<div class="grid">
+        <a href="tg://resolve?domain=${u}" class="app-link">telegram</a>
+        <a href="instagram://user?username=${u}" class="app-link">instagram</a>
+        <a href="fb://profile/${u}" class="app-link">facebook</a>
+        <a href="https://www.tiktok.com/@${u}" class="app-link">tiktok</a>
+      </div>`);
+
+      addH("global osint databases", `<div class="grid">
+        <a href="https://discordlookup.com/user/${u}" target="_blank">discordlookup</a>
+        <a href="https://whatsmyname.app/?q=${u}" target="_blank">whatsmyname</a>
+        <a href="https://namechk.com/?q=${u}" target="_blank">namechk</a>
+        <a href="https://checkusernames.com/?username=${u}" target="_blank">checkusernames</a>
+        <a href="https://vk.com/${u}" target="_blank">vk search</a>
+        <a href="https://steamcommunity.com/id/${u}" target="_blank">steam</a>
       </div>`);
     }
 
-    if(type === "domain") {
-       const cl = q.replace(/https?:\/\//, "").split("/")[0];
-       const dns = await fetch(`https://networkcalc.com/api/dns/lookup/${encodeURIComponent(cl)}`).then(r=>r.json());
-       if(dns.records) addC("dns records", JSON.stringify(dns.records, null, 2));
-       addH("tools", `<div class="grid"><a href="https://whois.domaintools.com/${cl}">🔍 whois</a><a href="https://dnsdumpster.com/">🔍 dnsdumpster</a></div>`);
-    }
-
-  } catch(e) { addC("error", e.message); }
+  } catch(e) { addC("system error", e.message); }
   finally { b.disabled = false; b.innerText = "initiate scan"; }
 }
 
+// === RENDERERS ===
 function addC(t, txt) {
   const d = document.createElement("div"); d.className = "card";
-  d.innerHTML = `<div class="card-title"><span>${esc(t)}</span><span class="add-btn">[+]</span></div><pre style="margin:0; white-space:pre-wrap; font-family:inherit;">${esc(txt)}</pre>`;
+  d.innerHTML = `<div class="card-title"><span>${esc(t)}</span><span class="add-btn" title="Save to Notepad">[+]</span></div><pre style="margin:0; white-space:pre-wrap; font-family:inherit;">${esc(txt)}</pre>`;
   d.querySelector(".add-btn").onclick = (e) => save(e, t, txt);
   document.getElementById("out").appendChild(d);
 }
@@ -439,11 +579,12 @@ function addH(t, h) {
 }
 function addHC(t, h, raw) {
   const d = document.createElement("div"); d.className = "card";
-  d.innerHTML = `<div class="card-title"><span>${esc(t)}</span><span class="add-btn">[+]</span></div>${h}`;
+  d.innerHTML = `<div class="card-title"><span>${esc(t)}</span><span class="add-btn" title="Save to Notepad">[+]</span></div>${h}`;
   d.querySelector(".add-btn").onclick = (e) => save(e, t, raw);
   document.getElementById("out").appendChild(d);
 }
 
+// === BACKGROUND CANVAS ===
 const cv = document.getElementById("p"); const cx = cv.getContext("2d");
 let w, h, pts = [];
 function rs() { w=cv.width=innerWidth; h=cv.height=innerHeight; pts=[]; for(let i=0;i<60;i++) pts.push({x:Math.random()*w, y:Math.random()*h, vx:(Math.random()-0.5)*0.4, vy:(Math.random()-0.5)*0.4, r:Math.random()*2+1}); }
