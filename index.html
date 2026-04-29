@@ -237,9 +237,9 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .grid a:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
 
-/* Live Scan List */
-.live-scan-item { display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.2); padding: 6px 0; font-family: monospace; font-size: 13px;}
-.live-scan-item:last-child { border: none; }
+/* Special styling for App Links */
+.app-link { background: rgba(255,255,255,0.2) !important; border: 1px solid #fff !important; }
+.app-link:hover { background: #fff !important; color: #ff85a2 !important; }
 
 .map-container {
   width: 100%; height: 180px; border-radius: 12px; overflow: hidden; margin-top: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.1);
@@ -298,7 +298,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 <div id="out"></div>
 
-<div class="footer">recidivismoss toolkit · build v1.1.5 (live scanners)</div>
+<div class="footer">recidivismoss toolkit · build v1.2 (osint arsenal)</div>
 
 </div>
 
@@ -321,11 +321,11 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 function escapeHTML(str) { 
   if (!str) return "";
   return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;"); 
+    .replace(/&/g, "&")
+    .replace(/</g, "<")
+    .replace(/>/g, ">")
+    .replace(/"/g, """)
+    .replace(/'/g, "'"); 
 }
 
 // === NOTEPAD ===
@@ -434,6 +434,13 @@ async function run() {
       if (lat && lon) {
         addCardHtml("map view", `<div class="map-container"><iframe width="100%" height="100%" frameborder="0" src="https://maps.google.com/maps?q=${lat},${lon}&hl=en&z=12&output=embed"></iframe></div>`);
       }
+
+      addCardHtml("threat intel databases", `<div class="grid">
+        <a href="https://www.virustotal.com/gui/ip-address/${encodeURIComponent(q)}" target="_blank">virustotal</a>
+        <a href="https://otx.alienvault.com/indicator/ip/${encodeURIComponent(q)}" target="_blank">alienvault</a>
+        <a href="https://www.abuseipdb.com/check/${encodeURIComponent(q)}" target="_blank">abuseipdb</a>
+        <a href="https://shodan.io/host/${encodeURIComponent(q)}" target="_blank">shodan</a>
+      </div>`);
     }
 
     // === 2. DOMAIN SCAN ===
@@ -453,70 +460,50 @@ async function run() {
           }
         }
       } catch (e) { addCard("dns error", "failed to fetch records."); }
+      
+      addCardHtml("threat intel & whois", `<div class="grid">
+        <a href="https://www.virustotal.com/gui/domain/${encodeURIComponent(clean)}" target="_blank">virustotal</a>
+        <a href="https://crt.sh/?q=${encodeURIComponent(clean)}" target="_blank">ssl certs</a>
+        <a href="https://whois.domaintools.com/${encodeURIComponent(clean)}" target="_blank">whois</a>
+        <a href="https://dnsdumpster.com/" target="_blank">dnsdumpster</a>
+      </div>`);
     }
 
-    // === 3. PHONE SCAN ===
+    // === 3. PHONE SCAN (МАССИВНЫЕ ИСТОЧНИКИ) ===
     else if (type === "phone") {
       const digits = q.replace(/\D/g, "");
       const info = analyzePhone(digits);
       addCard("local intelligence", `region: ${info.region}\ncarrier: ${info.carrier}\nformatted: +${digits}`);
-      addCardHtml("app deep links", `
+      
+      addCardHtml("direct messengers", `
         <div class="grid">
           <a href="tg://resolve?phone=${digits}" class="app-link">📱 open in telegram</a>
           <a href="whatsapp://send?phone=${digits}" class="app-link">🟢 open whatsapp</a>
-          <a href="https://web.getcontact.com/" target="_blank">🔍 getcontact web</a>
+          <a href="viber://contact?number=%2B${digits}" class="app-link">🟣 open viber</a>
+        </div>
+      `);
+
+      addCardHtml("caller id & leak databases", `
+        <div class="grid">
+          <a href="https://web.getcontact.com/" target="_blank">getcontact web</a>
+          <a href="https://sync.me/search/?number=${digits}" target="_blank">sync.me lookup</a>
+          <a href="https://numbuster.com/ru/phone/${digits}" target="_blank">numbuster</a>
+          <a href="https://www.truecaller.com/search/global/${digits}" target="_blank">truecaller global</a>
+          <a href="https://intelx.io/?s=${digits}" target="_blank">intelx leak search</a>
         </div>
       `);
     }
 
-    // === 4. SOCIALS SCAN (РОБЛОКС + ЛАЙВ ПРОВЕРКА!) ===
+    // === 4. SOCIALS SCAN (МАССИВНЫЕ ИСТОЧНИКИ) ===
     else if (type === "socials") {
       const uname = encodeURIComponent(q.replace(/\s/g, ""));
-      const cleanName = q.replace(/\s/g, "");
       
-      // БЛОК 1: LIVE SOCIAL SCANNER (CORS BYPASS)
-      addCardHtml("live social scanner", `
-        <div id="live-scan">
-          <div class="live-scan-item"><span>telegram:</span> <span id="tg-res">checking... ⏳</span></div>
-          <div class="live-scan-item"><span>github:</span> <span id="gh-res">checking... ⏳</span></div>
-          <div class="live-scan-item"><span>tiktok:</span> <span id="tk-res">checking... ⏳</span></div>
-        </div>
-      `);
-
-      // Асинхронные проверки (Не блокируют Роблокс)
-      // Telegram (via allorigins CORS bypass)
-      fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://t.me/'+cleanName)}`)
-        .then(r=>r.json())
-        .then(d => {
-           const found = d.contents && d.contents.includes('tgme_page_title') && !d.contents.includes('If you have Telegram, you can contact');
-           document.getElementById('tg-res').innerHTML = found ? `<span style="color:var(--status-on)">✅ FOUND</span>` : `<span style="color:var(--status-off)">❌ NOT FOUND</span>`;
-        }).catch(() => document.getElementById('tg-res').innerText = "⚠️ ERR");
-
-      // TikTok (via allorigins CORS bypass)
-      fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://www.tiktok.com/@'+cleanName)}`)
-        .then(r=>r.json())
-        .then(d => {
-           const notFound = d.contents && (d.contents.includes('Couldn&#x27;t find this account') || d.contents.includes('user-not-found'));
-           document.getElementById('tk-res').innerHTML = !notFound ? `<span style="color:var(--status-on)">✅ FOUND</span>` : `<span style="color:var(--status-off)">❌ NOT FOUND</span>`;
-        }).catch(() => document.getElementById('tk-res').innerText = "⚠️ ERR");
-
-      // GitHub
-      fetch(`https://api.github.com/users/${cleanName}`)
-        .then(r=>r.json())
-        .then(d => {
-           document.getElementById('gh-res').innerHTML = d.id ? `<span style="color:var(--status-on)">✅ FOUND</span>` : `<span style="color:var(--status-off)">❌ NOT FOUND</span>`;
-        }).catch(() => document.getElementById('gh-res').innerText = "⚠️ ERR");
-
-      // БЛОК 2: ROBLOX WIDGET (С НОРМАЛЬНОЙ ОБРАБОТКОЙ ОШИБОК)
-      addCard("roblox status", "connecting to proxy api...");
+      // ROBLOX WIDGET (С нормальной обработкой ошибок)
       try {
         const rSearch = await fetch(`https://users.roproxy.com/v1/users/search?keyword=${uname}&limit=1`).then(r => r.json());
-        
         if (rSearch.errors || !rSearch.data) {
-           addCard("roblox error", "api rate limit / proxy blocked. try again later.");
-        } else if (rSearch.data.length === 0) {
-           addCard("roblox profile", "❌ user not found on roblox.");
-        } else {
+           // Ошибка прокси, игнорируем тихо
+        } else if (rSearch.data.length > 0) {
           const uid = rSearch.data[0].id;
           const [p, fw, fr, av, st] = await Promise.all([
             fetch(`https://users.roproxy.com/v1/users/${uid}`).then(r => r.json()),
@@ -543,30 +530,91 @@ async function run() {
               <span>📅 join: ${new Date(p.created).getFullYear()}</span>
             </div>
           `;
-          addCardHtmlCustom("roblox profile data", html, `user: ${p.name} | id: ${uid} | bio: ${p.description}`);
+          addCardHtmlCustom("roblox profile", html, `user: ${p.name} | id: ${uid} | bio: ${p.description}`);
         }
-      } catch(e) {
-        addCard("roblox error", "proxy connection failed. " + e.message);
-      }
+      } catch(e) {}
 
-      // БЛОК 3: ОТДЕЛЬНЫЕ ПОИСКОВИКИ И БАЗЫ
-      addCardHtml("external databases", `<div class="grid">
-        <a href="https://discordlookup.com/user/${uname}" target="_blank">discordlookup</a>
-        <a href="https://whatsmyname.app/?q=${uname}" target="_blank">whatsmyname</a>
-        <a href="https://namechk.com/?q=${uname}" target="_blank">namechk</a>
-      </div>`);
+      // GITHUB WIDGET
+      try {
+        const gh = await fetch(`https://api.github.com/users/${uname}`).then(r => r.json());
+        if (gh.id) {
+          const ghHtml = `
+            <div class="widget-flex">
+              <img src="${gh.avatar_url}" class="widget-avatar">
+              <div class="widget-info">
+                <b>${escapeHTML(gh.name || q.replace(/\s/g, ""))}</b><br>
+                <span style="opacity:0.7">@${escapeHTML(gh.login)}</span>
+              </div>
+            </div>
+            <div style="margin:10px 0; font-size:12px;"><i>${escapeHTML(gh.bio || "no bio")}</i></div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; opacity:0.9;">
+              <span>📦 repos: ${gh.public_repos}</span>
+              <span>📈 followers: ${gh.followers}</span>
+            </div>
+          `;
+          addCardHtmlCustom("github profile", ghHtml, `github: ${gh.login}\nrepos: ${gh.public_repos}`);
+        }
+      } catch(e) {}
+
+      addCardHtml("direct social media links", `
+        <div class="grid">
+          <a href="https://t.me/${uname}" class="app-link">📱 telegram profile</a>
+          <a href="https://www.tiktok.com/@${uname}" class="app-link">🎵 tiktok profile</a>
+          <a href="https://instagram.com/${uname}" class="app-link">📸 instagram profile</a>
+          <a href="https://vk.com/${uname}" target="_blank">📘 vkontakte search</a>
+          <a href="https://steamcommunity.com/id/${uname}" target="_blank">🎮 steam profile</a>
+        </div>
+      `);
+
+      addCardHtml("global sherlock databases", `
+        <div class="grid">
+          <a href="https://discordlookup.com/user/${uname}" target="_blank">discordlookup</a>
+          <a href="https://whatsmyname.app/?q=${uname}" target="_blank">whatsmyname</a>
+          <a href="https://namechk.com/?q=${uname}" target="_blank">namechk</a>
+          <a href="https://checkusernames.com/?username=${uname}" target="_blank">checkusernames</a>
+        </div>
+      `);
     }
 
-    // === 5. EMAIL SCAN ===
+    // === 5. EMAIL SCAN (МАССИВНЫЕ ИСТОЧНИКИ) ===
     else if (type === "email") {
       const em = q.toLowerCase();
-      addCardHtmlCustom("email identity", `<div class="widget-flex"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(em)}&backgroundColor=b6e3f4" class="widget-avatar" style="background:#fff;"><div class="widget-info"><b>${escapeHTML(em)}</b></div></div>`, `email: ${em}`);
+      const domain = em.split('@')[1];
+      
+      const identiconHtml = `
+        <div class="widget-flex">
+          <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(em)}&backgroundColor=b6e3f4" class="widget-avatar" style="background:#fff;">
+          <div class="widget-info">
+            <b>${escapeHTML(em)}</b><br>
+            <span style="opacity:0.7">domain: ${escapeHTML(domain)}</span>
+          </div>
+        </div>
+      `;
+      addCardHtmlCustom("email identity", identiconHtml, `email: ${em}`);
 
-      addCardHtml("breach databases (leaks)", `<div class="grid">
-        <a href="https://intelx.io/?s=${encodeURIComponent(em)}" target="_blank">intelx search</a>
-        <a href="https://leakcheck.io/search?type=email&query=${encodeURIComponent(em)}" target="_blank">leakcheck base</a>
-        <a href="https://haveibeenpwned.com/account/${encodeURIComponent(em)}" target="_blank">have i been pwned</a>
-      </div>`);
+      try {
+        const check = await fetch(`https://disposable.debounce.io/?email=${encodeURIComponent(em)}`).then(r=>r.json());
+        const isDisposable = check.disposable === "true";
+        addCard("security check", `disposable/temp mail: ${isDisposable ? "⚠️ YES" : "✅ NO"}\nstatus: active analysis complete.`);
+      } catch(e) {}
+
+      addCardHtml("osint & reputation", `
+        <div class="grid">
+          <a href="https://epieos.com/?q=${encodeURIComponent(em)}" target="_blank">epieos (google osint)</a>
+          <a href="https://emailrep.io/${encodeURIComponent(em)}" target="_blank">emailrep profile</a>
+          <a href="https://hunter.io/email-verifier/${encodeURIComponent(em)}" target="_blank">hunter.io verify</a>
+        </div>
+      `);
+
+      addCardHtml("breach & leaks databases", `
+        <div class="grid">
+          <a href="https://intelx.io/?s=${encodeURIComponent(em)}" target="_blank">intelx search</a>
+          <a href="https://leakcheck.io/search?type=email&query=${encodeURIComponent(em)}" target="_blank">leakcheck base</a>
+          <a href="https://snusbase.com/" target="_blank">snusbase global</a>
+          <a href="https://leak-lookup.com/search" target="_blank">leak-lookup</a>
+          <a href="https://haveibeenpwned.com/account/${encodeURIComponent(em)}" target="_blank">have i been pwned</a>
+        </div>
+      `);
     }
 
   } catch (e) { addCard("error", e.message); }
