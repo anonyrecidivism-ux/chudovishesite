@@ -278,7 +278,7 @@ button:disabled { opacity: 0.5; cursor: wait; }
 
   <button id="scan-btn" onclick="run()">initiate scan</button>
   <div id="out"></div>
-  <div class="footer">recidivismoss toolkit · build v1.3.1 (strict mode)</div>
+  <div class="footer">recidivismoss toolkit · build v1.3.2 (system fixed)</div>
 </div>
 
 <div class="modal" id="np-m">
@@ -296,18 +296,17 @@ button:disabled { opacity: 0.5; cursor: wait; }
 </div>
 
 <script>
-// === ИДЕАЛЬНЫЙ ESCAPE (БЕЗ ОШИБОК) ===
+// Железобетонная функция экранирования. Больше никаких ошибок синтаксиса.
 function esc(str) {
   if (!str) return "";
   return String(str)
-    .replace(/&/g, "&")
-    .replace(/</g, "<")
-    .replace(/>/g, ">")
-    .replace(/"/g, """)
-    .replace(/'/g, "'");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
-// === NOTEPAD ===
 const npt = document.getElementById("np-t");
 const npm = document.getElementById("np-m");
 npt.value = localStorage.getItem("rmoss_np") || "";
@@ -403,7 +402,7 @@ async function run() {
       }
       
       if(lat && lon) {
-        addH("map view", `<div class="map-box"><iframe width="100%" height="100%" frameborder="0" src="https://maps.google.com/maps?q=$${lat},${lon}&hl=en&z=12&output=embed"></iframe></div>`);
+        addH("map view", `<div class="map-box"><iframe width="100%" height="100%" frameborder="0" src="https://maps.google.com/maps?q=${lat},${lon}&hl=en&z=12&output=embed"></iframe></div>`);
       }
 
       addH("advanced threat databases", `<div class="grid">
@@ -429,7 +428,7 @@ async function run() {
           const ipData = await fetch(`https://ipapi.co/${encodeURIComponent(hostIp)}/json/`).then(r => r.json());
           if (ipData.latitude && ipData.longitude) {
             addC("server geolocation", `resolved ip: ${hostIp}\norg: ${ipData.org}\ncountry: ${ipData.country_name}\ncity: ${ipData.city}`);
-            addH("server map", `<div class="map-box"><iframe width="100%" height="100%" frameborder="0" src="https://maps.google.com/maps?q=$${ipData.latitude},${ipData.longitude}&hl=en&z=12&output=embed"></iframe></div>`);
+            addH("server map", `<div class="map-box"><iframe width="100%" height="100%" frameborder="0" src="https://maps.google.com/maps?q=${ipData.latitude},${ipData.longitude}&hl=en&z=12&output=embed"></iframe></div>`);
           }
          }
        } catch(e) {}
